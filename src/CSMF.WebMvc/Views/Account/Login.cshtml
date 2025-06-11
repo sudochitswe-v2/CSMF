@@ -1,0 +1,83 @@
+﻿@model CSMF.WebMvc.Models.Account.LoginViewModel
+
+@* @{ *@
+@*     ViewData["Title"] = "Login"; *@
+@* } *@
+
+@* <h1>Login</h1> *@
+
+@* <h4>LoginViewModel</h4> *@
+@* <hr /> *@
+@* <div class="row"> *@
+@*     <div class="col-md-4"> *@
+@*         <form asp-action="Login"> *@
+@*             <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="Username" class="control-label"></label> *@
+@*                 <input asp-for="Username" class="form-control" /> *@
+@*                 <span asp-validation-for="Username" class="text-danger"></span> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="Password" class="control-label"></label> *@
+@*                 <input asp-for="Password" class="form-control" /> *@
+@*                 <span asp-validation-for="Password" class="text-danger"></span> *@
+@*             </div> *@
+@*             <div class="form-group form-check"> *@
+@*                 <label class="form-check-label"> *@
+@*                     <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe) *@
+@*                 </label> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <input type="submit" value="Create" class="btn btn-primary" /> *@
+@*             </div> *@
+@*         </form> *@
+@*     </div> *@
+@* </div> *@
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_MinimalLayout.cshtml"; // Or use a minimal layout like _LoginLayout.cshtml
+}
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-sm w-100" style="max-width: 400px;">
+        <div class="card-header text-center">
+            @* <h4></h4> *@
+            <div class="text-center mb-4">
+                <img src="~/csmf_logo.png" alt="Login" style="height: 80px; width: 80px;" class="img-fluid">
+            </div>
+        </div>
+        <div class="card-body">
+
+            @if (!Html.ViewData.ModelState.IsValid)
+            {
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+            }
+
+            <form asp-action="Login" method="post" novalidate>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="Enter Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label"></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
