@@ -11,6 +11,9 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- Notiflix CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notiflix@3.2.6/dist/notiflix-3.2.6.min.css" />
+
     <!-- Custom Styles -->
     <style>
         body {
@@ -31,7 +34,7 @@
 
         .main-content {
             margin-left: 250px;
-            padding: 20px;
+            /* padding: 20px; */
             transition: margin-left 0.3s ease;
         }
 
@@ -84,10 +87,12 @@
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom">
-                    <h1 class="h2">@ViewBag.Title</h1>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                    <h5 class="h6">@ViewBag.Title</h5>
                 </div>
-                @RenderBody()
+                <div class="mt-1">
+                    @RenderBody()
+                </div>
             </main>
         </div>
     </div>
@@ -95,7 +100,30 @@
     <!-- Bootstrap 5 JS Bundle -->
     @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-    @RenderSection("Scripts", required: false)
+    <!-- Notiflix JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.6/dist/notiflix-aio-3.2.6.min.js"></script>
+    <script>
+        Notiflix.Confirm.init({
+            titleColor:"#dc3545",
+            okButtonBackground: '#dc3545',  // Bootstrap Red (Danger)
+            cancelButtonBackground: '#6c757d', // Optional: Bootstrap Secondary
+        });
+        function confirmDelete(id,item = "") {
+            Notiflix.Confirm.show(
+                'Confirm Deletion',
+                `Are you sure you want to delete this ${item}?`,
+                'Yes, Delete',
+                'Cancel',
+                function okCb() {
+                    document.getElementById('delete-form-' + id).submit();
+                },
+                function cancelCb() {
+                    // Do nothing
+                }
+            );
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

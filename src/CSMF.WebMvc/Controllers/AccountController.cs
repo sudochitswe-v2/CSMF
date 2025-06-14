@@ -78,5 +78,26 @@ namespace CSMF.WebMvc.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult WhoAmI()
+        {
+            var roles = User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToList();
+
+            return Json(new
+            {
+                Username = User.Identity?.Name,
+                IsAuthenticated = User.Identity?.IsAuthenticated,
+                Roles = roles
+            });
+        }
     }
 }

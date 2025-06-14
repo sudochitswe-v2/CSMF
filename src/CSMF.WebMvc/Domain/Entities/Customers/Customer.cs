@@ -1,4 +1,5 @@
 ﻿using CSMF.WebMvc.Domain.Abstractions;
+using CSMF.WebMvc.Domain.Entities.Branches;
 using CSMF.WebMvc.Domain.Entities.LoanApplications;
 
 namespace CSMF.WebMvc.Domain.Entities.Customers
@@ -12,8 +13,11 @@ namespace CSMF.WebMvc.Domain.Entities.Customers
         public string Address { get; set; }
         public string IdentificationNumber { get; set; }
 
+        public int BranchId { get; set; } // Assuming Customer belongs to a Branch
+
         // Navigation Properties
         public virtual ICollection<LoanApplication> LoanApplications { get; set; } = new List<LoanApplication>();
+        public virtual Branch Branch { get; set; } // Assuming Customer belongs to a Branch
 
     }
 }

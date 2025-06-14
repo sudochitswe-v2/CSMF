@@ -4,6 +4,7 @@ using CSMF.WebMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSMF.WebMvc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250614112230_Modified_Branch_Entity")]
+    partial class Modified_Branch_Entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,10 +55,6 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_on");
 
-                    b.Property<string>("SystemUserId")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("system_user_id");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -63,12 +62,6 @@ namespace CSMF.WebMvc.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_branch_users");
-
-                    b.HasIndex("BranchId")
-                        .HasDatabaseName("ix_branch_users_branch_id");
-
-                    b.HasIndex("SystemUserId")
-                        .HasDatabaseName("ix_branch_users_system_user_id");
 
                     b.ToTable("branch_users", (string)null);
                 });
@@ -86,6 +79,10 @@ namespace CSMF.WebMvc.Migrations
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("address");
+
+                    b.Property<int?>("BranchUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("branch_user_id");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -119,8 +116,18 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("phones");
 
+                    b.Property<string>("SystemUserId")
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("system_user_id");
+
                     b.HasKey("Id")
                         .HasName("pk_branches");
+
+                    b.HasIndex("BranchUserId")
+                        .HasDatabaseName("ix_branches_branch_user_id");
+
+                    b.HasIndex("SystemUserId")
+                        .HasDatabaseName("ix_branches_system_user_id");
 
                     b.ToTable("branches", (string)null);
                 });
@@ -734,6 +741,10 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("access_failed_count");
 
+                    b.Property<int?>("BranchUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("branch_user_id");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext")
@@ -803,6 +814,9 @@ namespace CSMF.WebMvc.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_asp_net_users");
+
+                    b.HasIndex("BranchUserId")
+                        .HasDatabaseName("ix_asp_net_users_branch_user_id");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -985,23 +999,17 @@ namespace CSMF.WebMvc.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.BranchUsers.BranchUser", b =>
+            modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.Branches.Branch", b =>
                 {
-                    b.HasOne("CSMF.WebMvc.Domain.Entities.Branches.Branch", "Branch")
-                        .WithMany("BranchUsers")
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_branch_users_branches_branch_id");
+                    b.HasOne("CSMF.WebMvc.Domain.Entities.BranchUsers.BranchUser", null)
+                        .WithMany("Branches")
+                        .HasForeignKey("BranchUserId")
+                        .HasConstraintName("fk_branches_branch_users_branch_user_id");
 
-                    b.HasOne("CSMF.WebMvc.Domain.Entities.Users.SystemUser", "SystemUser")
-                        .WithMany("BranchUsers")
+                    b.HasOne("CSMF.WebMvc.Domain.Entities.Users.SystemUser", null)
+                        .WithMany("Branches")
                         .HasForeignKey("SystemUserId")
-                        .HasConstraintName("fk_branch_users_users_system_user_id");
-
-                    b.Navigation("Branch");
-
-                    b.Navigation("SystemUser");
+                        .HasConstraintName("fk_branches_users_system_user_id");
                 });
 
             modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.Customers.Customer", b =>
@@ -1103,6 +1111,14 @@ namespace CSMF.WebMvc.Migrations
                     b.Navigation("RepaymentSchedule");
                 });
 
+            modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.Users.SystemUser", b =>
+                {
+                    b.HasOne("CSMF.WebMvc.Domain.Entities.BranchUsers.BranchUser", null)
+                        .WithMany("SystemUsers")
+                        .HasForeignKey("BranchUserId")
+                        .HasConstraintName("fk_asp_net_users_branch_users_branch_user_id");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.HasOne("CSMF.WebMvc.Domain.Entities.Users.SystemUser", null)
@@ -1168,10 +1184,15 @@ namespace CSMF.WebMvc.Migrations
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
                 });
 
+            modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.BranchUsers.BranchUser", b =>
+                {
+                    b.Navigation("Branches");
+
+                    b.Navigation("SystemUsers");
+                });
+
             modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.Branches.Branch", b =>
                 {
-                    b.Navigation("BranchUsers");
-
                     b.Navigation("Customers");
                 });
 
@@ -1205,7 +1226,7 @@ namespace CSMF.WebMvc.Migrations
 
             modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.Users.SystemUser", b =>
                 {
-                    b.Navigation("BranchUsers");
+                    b.Navigation("Branches");
 
                     b.Navigation("Roles");
                 });

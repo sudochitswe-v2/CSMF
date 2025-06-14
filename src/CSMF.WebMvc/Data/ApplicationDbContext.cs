@@ -9,6 +9,8 @@ using CSMF.WebMvc.Domain.Entities.LoanFees;
 using CSMF.WebMvc.Domain.Entities.LoanProducts;
 using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
 using CSMF.WebMvc.Domain.Entities.RepaymentTransactions;
+using CSMF.WebMvc.Domain.Entities.Branches;
+using CSMF.WebMvc.Domain.Entities.BranchUsers;
 
 namespace CSMF.WebMvc.Data
 {
@@ -18,6 +20,8 @@ namespace CSMF.WebMvc.Data
             : base(options)
         {
         }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<BranchUser> BranchUsers { get; set; }
         public DbSet<LoanProduct> LoanProducts { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<LoanApplication> LoanApplications { get; set; }

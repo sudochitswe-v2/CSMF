@@ -5,7 +5,6 @@ namespace CSMF.WebMvc.Domain.Entities.LoanApplications;
 
 public class LoanApplicationConfiguration : IEntityTypeConfiguration<LoanApplication>
 {
-    private IEntityTypeConfiguration<LoanApplication> _entityTypeConfigurationImplementation;
 
     public void Configure(EntityTypeBuilder<LoanApplication> builder)
     {
@@ -29,12 +28,13 @@ public class LoanApplicationConfiguration : IEntityTypeConfiguration<LoanApplica
         builder.Property(c => c.ModifiedBy).HasMaxLength(50);
 
         builder.HasIndex(e => e.LoanNumber).IsUnique();
+
         // Foreign Key Relationships
         builder.HasOne(d => d.LoanProduct)
             .WithMany(p => p.LoanApplications)
             .HasForeignKey(d => d.LoanProductId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.HasOne(d => d.Customer)
             .WithMany(p => p.LoanApplications)
             .HasForeignKey(d => d.CustomerId)

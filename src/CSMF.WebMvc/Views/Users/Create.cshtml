@@ -1,0 +1,96 @@
+﻿@model CSMF.WebMvc.Models.Users.UserCreateViewModel
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-sm w-100" style="max-width: 600px;">
+        <div class="card-body">
+            @if (!Html.ViewData.ModelState.IsValid)
+            {
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+            }
+            <form asp-action="Create" method="post">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">User Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <!-- First Name & Last Name -->
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <!-- Email & Password -->
+                            <div class="col-md-12">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" type="email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label"></label>
+                                <input asp-for="Password" type="password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ConfirmPassword" class="form-label"></label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Role Assignment</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select Roles</label>
+                            <div class="border rounded p-3 bg-light">
+                                @if (Model.Roles != null && Model.Roles.Any())
+                                {
+                                    foreach (var role in Model.Roles)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="SelectedRoles"
+                                                   value="@role.Name"
+                                                   id="role_@role.Name"
+                                            @(Model.SelectedRoles?.Contains(role.Name) == true ? "checked" : "") />
+
+                                            <label class="form-check-label" for="role_@role.Name">
+                                                @role.Name
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No roles available.</p>
+                                }
+                            </div>
+                            <span asp-validation-for="SelectedRoles" class="text-danger d-block mt-1"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-person-plus"></i> Create User
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>

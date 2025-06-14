@@ -1,0 +1,96 @@
+﻿@model CSMF.WebMvc.Models.Users.UpdateCreateViewModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-sm w-100" style="max-width: 600px;">
+        <div class="card-body">
+            <h4 class="mb-4 text-center">Edit User</h4>
+
+            @if (!Html.ViewData.ModelState.IsValid)
+            {
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+            }
+
+            <form asp-action="Edit" method="post">
+                <!-- Hidden ID -->
+                <input type="hidden" asp-for="Id" />
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">User Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <!-- First Name & Last Name -->
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-12">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" type="email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Role Assignment</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Select Roles</label>
+                            <div class="border rounded p-3 bg-light">
+                                @if (Model.Roles != null && Model.Roles.Any())
+                                {
+                                    foreach (var role in Model.Roles)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="SelectedRoles"
+                                                   value="@role.Name"
+                                                   id="role_@role.Name"
+                                            @(Model.SelectedRoles?.Contains(role.Name) == true ? "checked" : "") />
+
+                                            <label class="form-check-label" for="role_@role.Name">
+                                                @role.Name
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No roles available.</p>
+                                }
+                            </div>
+                            <span asp-validation-for="SelectedRoles" class="text-danger d-block mt-1"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
