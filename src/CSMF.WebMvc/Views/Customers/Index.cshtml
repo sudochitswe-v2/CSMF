@@ -1,7 +1,6 @@
-﻿@using CSMF.WebMvc.Models.Branches;
-@model IEnumerable<BranchReadViewModel>
+﻿@model IEnumerable<CustomerReadViewModel>
 @{
-    ViewData["Title"] = "Branches";
+    ViewData["Title"] = "Customers";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -13,33 +12,33 @@
 <table class="table table-striped table-hover">
     <thead class="table">
         <tr>
-            <th>Name</th>
+            <th>Full Name</th>
             <th>Email</th>
             <th>Phones</th>
             <th>Address</th>
+            <th>Branch</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         @if (Model.Any())
         {
-            @foreach (var branch in Model)
+            @foreach (var customer in Model)
             {
                 <tr>
-                    <td>@branch.Name</td>
-                    <td>@branch.Email</td>
+                    <td>@($"{customer.FirstName} {customer.LastName}")</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.Branch.Name</td>
                     <td>
-                        <span>@string.Join(", ", branch.Phones)</span>
-                    </td>
-                    <td>@branch.Address</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@branch.Id" class="btn btn-sm btn-outline-primary me-2">
-                            <i class="bi bi-pencil-square"></i>
+                        <a asp-action="Edit" asp-route-id="@customer.Id" class="btn btn-sm btn-outline-primary me-2">
+                            <i class="bi bi-pencil-square"></i> 
                         </a>
-                        <form id="delete-form-@branch.Id" asp-action="Delete" asp-route-id="@branch.Id" method="post" class="d-inline">
+                        <form id="delete-form-@customer.Id" asp-action="Delete" asp-route-id="@customer.Id" method="post" class="d-inline">
                             <button type="button" class="btn btn-sm btn-outline-danger"
-                                    onclick="confirmDelete(@branch.Id,'branch')">
-                                <i class="bi bi-trash"></i>
+                                    onclick="confirmDelete(@customer.Id,'branch')">
+                                <i class="bi bi-trash"></i> 
                             </button>
                         </form>
 
@@ -57,5 +56,6 @@
         }
     </tbody>
 </table>
+
 
 

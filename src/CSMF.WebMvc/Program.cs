@@ -3,6 +3,7 @@ using CSMF.WebMvc.Domain.Entities.Users;
 using CSMF.WebMvc.Migrations.Seeders;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -53,9 +54,11 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+app.UseExceptionHandler("/Error/InternalServerError");
+app.UseStatusCodePagesWithReExecute("/Error/NotFound");
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

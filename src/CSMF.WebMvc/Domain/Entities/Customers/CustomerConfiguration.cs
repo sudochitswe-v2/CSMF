@@ -24,8 +24,6 @@ namespace CSMF.WebMvc.Domain.Entities.Customers
             entity.HasIndex(e => e.Email).IsUnique();
             entity.HasIndex(e => e.IdentificationNumber).IsUnique();
 
-        
-
         }
     }
 }

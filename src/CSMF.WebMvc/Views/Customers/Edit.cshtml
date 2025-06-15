@@ -1,0 +1,113 @@
+﻿@model CustomerUpdateViewModel
+@{
+    ViewData["Title"] = "Edit Customer";
+}
+
+<div class="container">
+    <div class="card card shadow-sm w-100">
+        <div class="card-body ">
+            <!-- Validation Summary -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger mb-4">
+                    <strong>Please fix the following errors:</strong>
+                    <ul>
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+            @* <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div> *@
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row g-4">
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="col-md-6">
+                        <label asp-for="Phone" class="form-label"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <!-- Identification Number -->
+                    <div class="col-md-6">
+                        <label asp-for="IdentificationNumber" class="form-label"></label>
+                        <input asp-for="IdentificationNumber" class="form-control" />
+                        <span asp-validation-for="IdentificationNumber" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <!-- Branch Selection (Radio Buttons) -->
+                    <div class="col-md-6">
+                        <label class="form-label">Select Branch</label>
+                        <div class="border rounded p-3 bg-light">
+                            @if (Model.Branches != null && Model.Branches.Any())
+                            {
+                                foreach (var branch in Model.Branches)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="BranchId"
+                                               value="@branch.Id"
+                                               id="branch-@branch.Id"
+                                               @(Model.BranchId == branch.Id ? "checked" : "") />
+
+                                        <label class="form-check-label" for="branch-@branch.Id">
+                                            @branch.Name
+                                        </label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-muted">No branches available.</div>
+                            }
+
+                            <span asp-validation-for="BranchId" class="text-danger d-block mt-1"></span>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-md-12">
+                        <label asp-for="Address" class="form-label"></label>
+                        <textarea asp-for="Address" rows="3" class="form-control"></textarea>
+                        <span asp-validation-for="Address" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

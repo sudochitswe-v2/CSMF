@@ -1,152 +1,81 @@
 ﻿@using CSMF.WebMvc.Domain.Entities.Users
 @using Microsoft.AspNetCore.Identity
 @using System.Security.Claims
+@using System.Text.Json
+@using static CSMF.WebMvc.Models.NavGroupExtentions;
 
 @inject UserManager<SystemUser> _userManager
 @inject SignInManager<SystemUser> _signInManager
+@{
+    bool ShouldShow(string controller)
+    {
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
+        return controller == currentController;
+    }
+
+    bool ShouldActive(string action, string controller)
+    {
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
+        var currentAction = ViewContext.RouteData.Values["Action"]?.ToString() ?? string.Empty;
+        return action == currentAction && controller == currentController;
+    }
+
+    var navigation = GetDefaultNavData();
+}
 
 <div class="accordion" id="sidebarAccordion">
-
-    <!-- Dashboard (Top-Level Link) -->
-    <a class="nav-link py-3 px-3 @(ViewContext.RouteData.Values["Action"].ToString() == "Index" && ViewContext.RouteData.Values["Controller"].ToString() == "Home" ? "active" : "")"
-       asp-controller="Home" asp-action="Index">
-        <i class="bi bi-speedometer2 me-2"></i>Dashboard
-    </a>
-
-    <!-- Branches -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingBranches">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBranches" aria-expanded="false" aria-controls="collapseBranches">
-                <i class="bi bi-diagram-3 me-2"></i> Branches
-            </button>
-        </h2>
-        <div id="collapseBranches" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Branches" ? "show" : "")" aria-labelledby="headingBranches" data-bs-parent="#sidebarAccordion">
-            <div class="accordion-body p-0">
-                <div class="nav flex-column">
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="Branches" asp-action="Index">View Branches</a>
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Create" ? "active" : "")" asp-controller="Branches" asp-action="Create">Add Branch</a>
+    @foreach (var item in navigation.Items)
+    {
+        if (!item.IsAccordion)
+        {
+            <a class="nav-link text-secondary @(ShouldActive(item.Action, item.Controller) ? "fw-bold text-dark text-decoration-underline" : "") py-3 px-3"
+               asp-controller="@item.Controller" asp-action="@item.Action">
+                <i class="bi @item.Icon me-2"></i>@item.Title
+            </a>
+        }
+        else
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading@(item.Controller)">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse@(item.Controller)" aria-expanded="false"
+                            aria-controls="collapse@(item.Controller)">
+                        <i class="bi @item.Icon me-2"></i> @item.Title
+                    </button>
+                </h2>
+                <div id="collapse@(item.Controller)" class="accordion-collapse collapse @(ShouldShow(item.Controller) ? "show" : "")"
+                     aria-labelledby="heading@(item.Controller)" data-bs-parent="#sidebarAccordion">
+                    <div class="accordion-body p-0">
+                        <div class="nav flex-column">
+                            @foreach (var child in item.Children)
+                            {
+                                <a class="nav-link text-secondary @(ShouldActive(child.Action, item.Controller) ? "fw-bold text-dark text-decoration-underline" : "") py-2 px-4"
+                                   asp-controller="@item.Controller" asp-action="@child.Action">
+                                    <i class="bi @child.Icon me-2"></i> @child.Title
+                                </a>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Customers -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingCustomers">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCustomers" aria-expanded="false" aria-controls="collapseCustomers">
-                <i class="bi bi-person-lines-fill me-2"></i> Customers
-            </button>
-        </h2>
-        <div id="collapseCustomers" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Customers" ? "show" : "")" aria-labelledby="headingCustomers" data-bs-parent="#sidebarAccordion">
-            <div class="accordion-body p-0">
-                <div class="nav flex-column">
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="Customers" asp-action="Index">View Customers</a>
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Create" ? "active" : "")" asp-controller="Customers" asp-action="Create">Add Customers</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loans -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingLoans">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLoans" aria-expanded="false" aria-controls="collapseLoans">
-                <i class="bi bi-briefcase me-2"></i> Loans
-            </button>
-        </h2>
-        <div id="collapseLoans" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Loans" ? "show" : "")" aria-labelledby="headingLoans" data-bs-parent="#sidebarAccordion">
-            <div class="accordion-body p-0">
-                <div class="nav flex-column">
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="Loans" asp-action="Index">View Loans</a>
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Create" ? "active" : "")" asp-controller="Loans" asp-action="Create">Add Loan</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Repayments -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingRepayments">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRepayments" aria-expanded="false" aria-controls="collapseRepayments">
-                <i class="bi bi-wallet2 me-2"></i> Repayments
-            </button>
-        </h2>
-        <div id="collapseRepayments" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Repayments" ? "show" : "")" aria-labelledby="headingRepayments" data-bs-parent="#sidebarAccordion">
-            <div class="accordion-body p-0">
-                <div class="nav flex-column">
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="Repayments" asp-action="Index">View Repayments</a>
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Create" ? "active" : "")" asp-controller="Repayments" asp-action="Create">Add Repayment</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reports -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingReports">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
-                <i class="bi bi-graph-up me-2"></i> Reports
-            </button>
-        </h2>
-        <div id="collapseReports" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Reports" ? "show" : "")" aria-labelledby="headingReports" data-bs-parent="#sidebarAccordion">
-            <div class="accordion-body p-0">
-                <div class="nav flex-column">
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="Reports" asp-action="Index">View Reports</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Users -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingUsers">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
-                <i class="bi bi-person-gear me-2"></i> Users & Roles
-            </button>
-        </h2>
-        <div id="collapseUsers" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Users" ? "show" : "")" aria-labelledby="headingUsers" data-bs-parent="#sidebarAccordion">
-            <div class="accordion-body p-0">
-                <div class="nav flex-column">
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")" asp-controller="Users" asp-action="Index">View Users</a>
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Roles" ? "active" : "")" asp-controller="Users" asp-action="Roles"> Roles</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingSettings">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSettings" aria-expanded="false" aria-controls="collapseSettings">
-                <i class="bi bi-gear me-2"></i> Settings
-            </button>
-        </h2>
-        <div id="collapseSettings" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Settings" ? "show" : "")" aria-labelledby="headingSettings" data-bs-parent="#sidebarAccordion">
-            <div class="accordion-body p-0">
-                <div class="nav flex-column">
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "General" ? "active" : "")" asp-controller="Settings" asp-action="General">General</a>
-                    <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "Security" ? "active" : "")" asp-controller="Settings" asp-action="Security">Security</a>
-                </div>
-            </div>
-        </div>
-    </div>
+        }
+    }
 
     @if (User is not null && User.Identity.IsAuthenticated)
     {
-        <!-- User Profile Section -->
+        <!-- User Profile -->
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingUserProfile">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUserProfile" aria-expanded="false" aria-controls="collapseUserProfile">
                     <i class="bi bi-person me-2"></i> @User.Identity.Name
                 </button>
             </h2>
-            <div id="collapseUserProfile" class="accordion-collapse collapse @(ViewContext.RouteData.Values["Controller"].ToString() == "Account" ? "show" : "")" aria-labelledby="headingUserProfile" data-bs-parent="#sidebarAccordion">
+            <div id="collapseUserProfile" class="accordion-collapse collapse @(ShouldShow("Account") ? "show" : "")" aria-labelledby="headingUserProfile" data-bs-parent="#sidebarAccordion">
                 <div class="accordion-body p-0">
                     <div class="nav flex-column">
-                        <a class="nav-link py-2 px-4 @(ViewContext.RouteData.Values["Action"].ToString() == "WhoAmI" ? "active" : "")" asp-controller="Account" asp-action="WhoAmI">WhoAmI?</a>
+                        <a class="nav-link text-secondary @(ShouldActive("WhoAmI", "Account") ? "fw-bold text-dark text-decoration-underline" : "") py-2 px-4" asp-controller="Account" asp-action="WhoAmI">WhoAmI?</a>
                         <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="form-inline">
-                            <button type="submit" class="btn btn-link nav-link py-3 px-3 w-100 text-start text-danger">
+                            <button type="submit" class="btn btn-link nav-link text-danger py-3 px-3 w-100 text-start">
                                 <i class="bi bi-box-arrow-right me-2"></i> Logout
                             </button>
                         </form>
@@ -155,5 +84,4 @@
             </div>
         </div>
     }
-
 </div>
