@@ -4,53 +4,54 @@
     ViewData["Title"] = "Create Branch";
 }
 <div class="container">
-    <div class="card shadow-sm w-100" style="max-width: 600px;">
-        <div class="card-body">
-            @if (!Html.ViewData.ModelState.IsValid)
-            {
-                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
-            }
-            <form asp-action="Create" method="post">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">Branch Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <!-- Branch Name -->
-                            <div class="col-md-12">
-                                <label asp-for="Name" class="form-label"></label>
-                                <input asp-for="Name" class="form-control" />
-                                <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="col-md-12">
-                                <label asp-for="Email" class="form-label"></label>
-                                <input asp-for="Email" type="email" class="form-control" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-
-                            <!-- Phones -->
-                            <div class="col-md-12">
-                                <label asp-for="Phones" class="form-label"></label>
-                                <input asp-for="Phones" type="tel" class="form-control" />
-                                <span asp-validation-for="Phones" class="text-danger"></span>
-                            </div>
-
-                            <!-- Address -->
-                            <div class="col-md-12">
-                                <label asp-for="Address" class="form-label"></label>
-                                <input asp-for="Address" type="text" class="form-control" />
-                                <span asp-validation-for="Address" class="text-danger"></span>
-                            </div>
-
+<div class="card shadow-sm w-100" style="max-width: 600px;">
+    <div class="card-body">
+        @if (!Html.ViewData.ModelState.IsValid)
+        {
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+        }
+        <form asp-action="Create" method="post">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Branch Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <!-- Branch Name -->
+                        <div class="col-md-12">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
+
+                        <!-- Email -->
+                        <div class="col-md-12">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" type="email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- Phones -->
+                        <div class="col-md-12">
+                            <label asp-for="Phones" class="form-label"></label>
+                            <input asp-for="Phones" type="tel" class="form-control" />
+                            <span asp-validation-for="Phones" class="text-danger"></span>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="col-md-12">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" type="text" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success">
-                    <i class="bi bi-plus-lg"></i> Create
-                </button>
-            </form>
-        </div>
+            </div>
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Create
+            </button>
+        </form>
     </div>
+</div>
+</div>

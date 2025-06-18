@@ -1,4 +1,5 @@
 ﻿using CSMF.WebMvc.Domain.Entities.Branches;
+using CSMF.WebMvc.Models.Branches;
 
 namespace CSMF.WebMvc.Models.Customers
 {
@@ -13,6 +14,6 @@ namespace CSMF.WebMvc.Models.Customers
         public string IdentificationNumber { get; set; }
         public int BranchId { get; set; }
 
-        public Branch Branch { get; set; }
+        public virtual BranchReadViewModel Branch { get; set; }
     }
 }

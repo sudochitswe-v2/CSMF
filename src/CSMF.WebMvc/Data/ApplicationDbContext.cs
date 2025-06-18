@@ -11,6 +11,7 @@ using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
 using CSMF.WebMvc.Domain.Entities.RepaymentTransactions;
 using CSMF.WebMvc.Domain.Entities.Branches;
 using CSMF.WebMvc.Domain.Entities.BranchUsers;
+using CSMF.WebMvc.Domain.Entities.Documents;
 
 namespace CSMF.WebMvc.Data
 {
@@ -24,6 +25,7 @@ namespace CSMF.WebMvc.Data
         public DbSet<BranchUser> BranchUsers { get; set; }
         public DbSet<LoanProduct> LoanProducts { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Document> Documents { get; set; }
         public DbSet<LoanApplication> LoanApplications { get; set; }
         public DbSet<LoanFee> LoanFees { get; set; }
         public DbSet<RepaymentSchedule> RepaymentSchedules { get; set; }

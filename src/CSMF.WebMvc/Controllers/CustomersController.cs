@@ -134,6 +134,7 @@ namespace CSMF.WebMvc.Controllers
 
             return false;
         }
+        
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -182,6 +183,19 @@ namespace CSMF.WebMvc.Controllers
             await dbContext.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult Detail(int id)
+        {
+            var customer = dbContext.Customers
+                .Include(c=>c.Branch)
+                .Include(c=>c.Documents)
+                .Include(c=>c.LoanApplications)
+                .FirstOrDefault(e => e.Id.Equals(id));
+            if (customer is null) return NotFound();
+            var viewModel = customer.Adapt<CustomerReadDetailViewModel>();
+            return View(viewModel);
         }
     }
 }

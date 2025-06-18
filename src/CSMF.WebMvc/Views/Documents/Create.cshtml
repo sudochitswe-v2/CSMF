@@ -1,0 +1,91 @@
+﻿@model CSMF.WebMvc.Models.Documents.DocumentCreateViewModel
+@{
+    ViewData["Title"] = "Add Document";
+}
+
+<div class="container mt-4">
+    <div class="row g-4">
+
+        <!-- Left Column: Customer Info -->
+        <div class="col-md-6">
+            <div class="card bg-light shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">For Customer</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Name:</strong>
+                            <span>@Model.Customer.FirstName @Model.Customer.LastName</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>ID Number:</strong>
+                            <span>@Model.Customer.IdentificationNumber</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Email:</strong>
+                            <span>@Model.Customer.Email</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Phone:</strong>
+                            <span>@Model.Customer.Phone</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Branch:</strong>
+                            <span>@Model.Customer.Branch?.Name</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Document Form -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="CustomerId" />
+
+                        <!-- Document Name -->
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger d-block mt-1"></span>
+                        </div>
+
+                        <!-- Document Type -->
+                        <div class="mb-3">
+                            <label asp-for="DocumentType" class="form-label"></label>
+                            <input asp-for="DocumentType" class="form-control" />
+                            <small class="form-text text-muted">e.g., ID Card, Passport, Bank Statement</small>
+                            <span asp-validation-for="DocumentType" class="text-danger d-block mt-1"></span>
+                        </div>
+
+                        <!-- Upload File -->
+                        <div class="mb-3">
+                            <label asp-for="File" class="form-label"></label>
+                            <input asp-for="File" class="form-control" type="file" accept=".pdf,.jpg,.png,.doc,.docx,.xls,.xlsx,.txt" />
+                            <span asp-validation-for="File" class="text-danger d-block mt-1"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" rows="3" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-between mt-4">
+                            <a asp-controller="Customers" asp-action="Detail" asp-route-id="@Model.CustomerId"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Customer
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-2"></i>Save Document
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
