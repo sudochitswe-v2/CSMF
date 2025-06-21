@@ -1,0 +1,119 @@
+﻿@model GrantorCreateViewModel
+@{
+    ViewData["Title"] = "Add Grantor";
+}
+
+<div class="container mt-4">
+    <div class="row g-4">
+
+        <!-- Left Column: Customer Info -->
+        <div class="col-md-6">
+            <div class="card bg-light shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">For Customer</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Name:</strong>
+                            <span>@Model.Customer.FirstName @Model.Customer.LastName</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>ID Number:</strong>
+                            <span>@Model.Customer.IdentificationNumber</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Email:</strong>
+                            <span>@Model.Customer.Email</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Phone:</strong>
+                            <span>@Model.Customer.Phone</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Branch:</strong>
+                            <span>@Model.Customer.Branch?.Name</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Document Form -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mb-4">
+                            <strong>Please fix the following errors:</strong>
+                            <ul>
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    @* <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div> *@
+
+                    <form asp-action="Create" method="post">
+                        <input type="hidden" asp-for="CustomerId" />
+                        <div class="row g-4">
+                            <!-- First Name -->
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" type="email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label"></label>
+                                <input asp-for="Phone" class="form-control" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+
+                            <!-- ID Number -->
+                            <div class="col-md-6">
+                                <label asp-for="IdentificationNumber" class="form-label"></label>
+                                <input asp-for="IdentificationNumber" class="form-control" />
+                                <span asp-validation-for="IdentificationNumber" class="text-danger"></span>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-md-12">
+                                <label asp-for="Address" class="form-label"></label>
+                                <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-person-plus me-2"></i>Create
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

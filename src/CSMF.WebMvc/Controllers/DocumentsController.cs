@@ -18,10 +18,7 @@ namespace CSMF.WebMvc.Controllers
         [HttpGet]
         public IActionResult Create(int customerId)
         {
-            var customser = dbContext.Customers
-                .AsNoTracking()
-                .Include(c => c.Branch) // Include Branch if needed
-                .FirstOrDefault(c => c.Id == customerId);
+            var customser = GetCustomerData(customerId).Result;
 
             if (customser == null)
             {
@@ -65,7 +62,7 @@ namespace CSMF.WebMvc.Controllers
             if (model.File == null || model.File.Length == 0)
             {
                 ModelState.AddModelError("File", "Please select a file.");
-                var customer  = await GetCustomerData(model.CustomerId);
+                var customer = await GetCustomerData(model.CustomerId);
 
                 if (customer == null)
                 {
@@ -110,7 +107,7 @@ namespace CSMF.WebMvc.Controllers
             // Return file from byte[] Data
             return File(document.Data, document.ContentType, $"{document.Name}{document.Extension}");
         }
-        [HttpPost("delete/{id}")]
+        [Route("[controller]/[action]/{id?}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {

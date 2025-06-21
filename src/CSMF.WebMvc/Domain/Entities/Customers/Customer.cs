@@ -1,6 +1,7 @@
 ﻿using CSMF.WebMvc.Domain.Abstractions;
 using CSMF.WebMvc.Domain.Entities.Branches;
 using CSMF.WebMvc.Domain.Entities.Documents;
+using CSMF.WebMvc.Domain.Entities.Grantors;
 using CSMF.WebMvc.Domain.Entities.LoanApplications;
 
 namespace CSMF.WebMvc.Domain.Entities.Customers
@@ -19,6 +20,9 @@ namespace CSMF.WebMvc.Domain.Entities.Customers
         // Navigation Properties
         public virtual Branch Branch { get; set; } // Assuming Customer belongs to a Branch
         public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
+
+        public virtual ICollection<Grantor> Grantors { get; set; } = new List<Grantor>();
+
         public virtual ICollection<LoanApplication> LoanApplications { get; set; } = new List<LoanApplication>();
     }
 }

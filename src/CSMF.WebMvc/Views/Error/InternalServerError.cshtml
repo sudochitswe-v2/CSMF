@@ -5,19 +5,28 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-12">
+        <div class="col-12">
             <div class="card border-danger shadow-sm">
                 <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Internal Server Error</h4>
                 </div>
                 <div class="card-body">
-                    <p class="lead">@Model.Message</p>
+
+                    <!-- Error Message -->
+                    <p class="lead" id="errorMessage">@Model.Message</p>
+                    <button class="btn btn-sm btn-outline-secondary ms-1" onclick="copyText('errorMessage')">
+                        <i class="bi bi-clipboard me-1"></i>Copy Message
+                    </button>
 
                     <!-- Request ID -->
                     @if (Model.ShowRequestId)
                     {
                         <div class="alert alert-info mt-3 mb-0">
-                            <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                            <strong>Request ID:</strong>
+                            <code id="requestId">@Model.RequestId</code>
+                            <button class="btn btn-sm btn-outline-secondary ms-1" onclick="copyText('requestId')">
+                                <i class="bi bi-clipboard me-1"></i>Copy
+                            </button>
                         </div>
                     }
 
@@ -30,7 +39,10 @@
                             </button>
 
                             <div class="collapse mt-3" id="stackTraceCollapse">
-                                <pre class="bg-light p-3 rounded border small">@Model.StackTrace</pre>
+                                <pre id="stackTraceContent" class="bg-light p-3 rounded border small">@Model.StackTrace</pre>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="copyText('stackTraceContent')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy Stack Trace
+                                </button>
                             </div>
                         </div>
                     }
@@ -55,3 +67,15 @@
         </div>
     </div>
 </div>
+<script>
+    function copyText(elementId) {
+        const element = document.getElementById(elementId);
+        const textToCopy = element?.innerText || element?.textContent;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('Copied to clipboard');
+        }).catch(err => {
+            alert('Failed to copy: ' + err);
+        });
+    }
+</script>

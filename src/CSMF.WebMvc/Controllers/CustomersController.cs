@@ -189,8 +189,10 @@ namespace CSMF.WebMvc.Controllers
         public IActionResult Detail(int id)
         {
             var customer = dbContext.Customers
+                .AsNoTracking()
                 .Include(c=>c.Branch)
                 .Include(c=>c.Documents)
+                .Include(c=>c.Grantors)
                 .Include(c=>c.LoanApplications)
                 .FirstOrDefault(e => e.Id.Equals(id));
             if (customer is null) return NotFound();
