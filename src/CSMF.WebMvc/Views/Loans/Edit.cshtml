@@ -1,0 +1,248 @@
+﻿@model LoanEditViewModel
+@{
+    ViewData["Title"] = $"Edit Loan - {Model.ProductTitle}";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4">Edit Loan Product</h3>
+
+    <!-- Validation Summary -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger mb-4">
+            <strong>Please fix the following errors:</strong>
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <!-- Loan Info Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Loan Informations</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="ProductTitle" class="form-label"></label>
+                        <input asp-for="ProductTitle" class="form-control" />
+                        <span asp-validation-for="ProductTitle" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Duration Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Duration</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="MinPrincipalAmount" class="form-label"></label>
+                        <input asp-for="MinPrincipalAmount" class="form-control" />
+                        <span asp-validation-for="MinPrincipalAmount" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MaxPrincipalAmount" class="form-label"></label>
+                        <input asp-for="MaxPrincipalAmount" class="form-control" />
+                        <span asp-validation-for="MaxPrincipalAmount" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="DurationPeriod" class="form-label"></label>
+                        <select asp-for="DurationPeriod" class="form-select"
+                                asp-items="@(new SelectList(Model.DurationPeriodOptions))">
+                            <option value="">-- Select Duration Period --</option>
+                        </select>
+                        <span asp-validation-for="DurationPeriod" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="DurationType" class="form-label"></label>
+                        <select asp-for="DurationType" class="form-select"
+                                asp-items="@(new SelectList(Model.DurationTypeOptions))">
+                            <option value="">-- Select Duration Type --</option>
+                        </select>
+                        <span asp-validation-for="DurationType" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MinDurationValue" class="form-label"></label>
+                        <input asp-for="MinDurationValue" class="form-control" />
+                        <small class="form-text text-muted">Minimum duration value</small>
+                        <span asp-validation-for="MinDurationValue" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MaxDurationValue" class="form-label"></label>
+                        <input asp-for="MaxDurationValue" class="form-control" />
+                        <small class="form-text text-muted">Optional maximum duration</small>
+                        <span asp-validation-for="MaxDurationValue" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interest & Repayment Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">Interest & Repayment</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="InterestMethod" class="form-label"></label>
+                        <select asp-for="InterestMethod" class="form-select"
+                                asp-items="@(new SelectList(Model.InterestMethodOptions))">
+                            <option value="">-- Select Interest Method --</option>
+                        </select>
+                        <span asp-validation-for="InterestMethod" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="InterestRate" class="form-label"></label>
+                        <input asp-for="InterestRate" class="form-control" />
+                        <small class="form-text text-muted">e.g., 5% interest rate</small>
+                        <span asp-validation-for="InterestRate" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="InterestCycle" class="form-label"></label>
+                        <select asp-for="InterestCycle" class="form-select"
+                                asp-items="@(new SelectList(Model.TimeCycleOptions))">
+                            <option value="">-- Select Interest Cycle --</option>
+                        </select>
+                        <span asp-validation-for="InterestCycle" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="RepaymentCycle" class="form-label"></label>
+                        <select asp-for="RepaymentCycle" class="form-select"
+                                asp-items="@(new SelectList(Model.TimeCycleOptions))">
+                            <option value="">-- Select Repayment Cycle --</option>
+                        </select>
+                        <span asp-validation-for="RepaymentCycle" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Penalty Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0">Penalty Settings</h5>
+            </div>
+            <div class="card-body">
+                <!-- Enable Penalty Checkbox -->
+                <div class="mb-3 form-check form-switch">
+                    <input asp-for="LatePenaltyEnabled" class="form-check-input" type="checkbox" />
+                    <label asp-for="LatePenaltyEnabled" class="form-check-label">Enable Late Payment Penalty</label>
+                </div>
+
+                <!-- Conditional Fields -->
+                <div id="penaltyFields" class="row g-3 penalty-field">
+                    <div class="col-md-6">
+                        <label asp-for="PenaltyType" class="form-label"></label>
+                        <select asp-for="PenaltyType" class="form-select"
+                                asp-items="@(new SelectList(Model.PenaltyTypeOptions))">
+                            <option value="">-- Select Penalty Type --</option>
+                        </select>
+                        <span asp-validation-for="PenaltyType" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="GracePeriodDays" class="form-label"></label>
+                        <input asp-for="GracePeriodDays" class="form-control" />
+                        <small class="form-text text-muted">Number of days before penalty applies</small>
+                        <span asp-validation-for="GracePeriodDays" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PenaltyFixedAmount" class="form-label"></label>
+                        <input asp-for="PenaltyFixedAmount" class="form-control" />
+                        <small class="form-text text-muted">Fixed amount if selected</small>
+                        <span asp-validation-for="PenaltyFixedAmount" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PenaltyPercentage" class="form-label"></label>
+                        <input asp-for="PenaltyPercentage" class="form-control" />
+                        <small class="form-text text-muted">Percentage if selected</small>
+                        <span asp-validation-for="PenaltyPercentage" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PenaltyCalculationBase" class="form-label"></label>
+                        <select asp-for="PenaltyCalculationBase" class="form-select"
+                                asp-items="@(new SelectList(Model.PenaltyCalculationBaseOptions))">
+                            <option value="">-- Select Base --</option>
+                        </select>
+                        <span asp-validation-for="PenaltyCalculationBase" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="RecurringPenaltyType" class="form-label"></label>
+                        <select asp-for="RecurringPenaltyType" class="form-select"
+                                asp-items="@(new SelectList(Model.TimeCycleOptions))">
+                            <option value="">-- Select Recurring Type --</option>
+                        </select>
+                        <span asp-validation-for="RecurringPenaltyType" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2 d-md-flex justify-content-between mt-4 mb-4">
+            <a asp-controller="Loans" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save me-2"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkbox = document.getElementById("LatePenaltyEnabled");
+            const penaltyFields = document.getElementById("penaltyFields");
+
+            // Set initial state
+            if (checkbox && penaltyFields) {
+                penaltyFields.style.display = checkbox.checked ? 'flex' : 'none';
+
+                // Toggle visibility on change
+                checkbox.addEventListener("change", function () {
+                    penaltyFields.style.display = checkbox.checked ? 'flex' : 'none';
+                });
+            }
+
+            // Tooltip support
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipEl) {
+                return new bootstrap.Tooltip(tooltipEl);
+            });
+        });
+    </script>
+}

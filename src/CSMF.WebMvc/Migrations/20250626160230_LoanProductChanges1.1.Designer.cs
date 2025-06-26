@@ -4,6 +4,7 @@ using CSMF.WebMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSMF.WebMvc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250626160230_LoanProductChanges1.1")]
+    partial class LoanProductChanges11
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -584,6 +587,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("modified_on");
 
                     b.Property<string>("PenaltyCalculationBase")
+                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("penalty_calculation_base");
 

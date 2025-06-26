@@ -4,6 +4,7 @@ using CSMF.WebMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSMF.WebMvc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250624132610_LoanProductChanges")]
+    partial class LoanProductChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -559,17 +562,17 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("late_penalty_enabled");
 
-                    b.Property<int?>("MaxDurationValue")
+                    b.Property<int?>("MaxDurationMonths")
                         .HasColumnType("int")
-                        .HasColumnName("max_duration_value");
+                        .HasColumnName("max_duration_months");
 
                     b.Property<decimal>("MaxPrincipalAmount")
                         .HasColumnType("decimal(65,30)")
                         .HasColumnName("max_principal_amount");
 
-                    b.Property<int>("MinDurationValue")
+                    b.Property<int>("MinDurationMonths")
                         .HasColumnType("int")
-                        .HasColumnName("min_duration_value");
+                        .HasColumnName("min_duration_months");
 
                     b.Property<decimal>("MinPrincipalAmount")
                         .HasColumnType("decimal(65,30)")
@@ -584,6 +587,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("modified_on");
 
                     b.Property<string>("PenaltyCalculationBase")
+                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("penalty_calculation_base");
 
