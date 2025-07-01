@@ -8,7 +8,7 @@ public class PenaltyTransactionConfiguration : IEntityTypeConfiguration<PenaltyT
     public void Configure(EntityTypeBuilder<PenaltyTransaction> builder)
     {
         builder.HasKey(e => e.Id);
-        builder.Property(e => e.PenaltyAmount).HasColumnType("decimal(18,2)");
+        builder.Property(e => e.PenaltyAmount).HasConversion<decimal>().HasPrecision(18,2);
         builder.Property(e => e.PenaltyType).IsRequired().HasMaxLength(50);
         builder.Property(e => e.PenaltyDate).HasColumnType("date");
         builder.Property(e => e.Status).IsRequired().HasMaxLength(50);
@@ -23,6 +23,7 @@ public class PenaltyTransactionConfiguration : IEntityTypeConfiguration<PenaltyT
               .WithMany(p => p.PenaltyTransactions)
               .HasForeignKey(d => d.LoanApplicationId)
               .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(d => d.RepaymentSchedule)
               .WithMany(p => p.PenaltyTransactions)
               .HasForeignKey(d => d.RepaymentScheduleId)

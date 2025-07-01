@@ -3,7 +3,6 @@ using System;
 using CSMF.WebMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -17,10 +16,8 @@ namespace CSMF.WebMvc.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.17")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.BranchUsers.BranchUser", b =>
                 {
@@ -28,8 +25,6 @@ namespace CSMF.WebMvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BranchId")
                         .HasColumnType("int")
@@ -80,8 +75,6 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -131,8 +124,6 @@ namespace CSMF.WebMvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -200,8 +191,6 @@ namespace CSMF.WebMvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ContentType")
                         .IsRequired()
@@ -273,8 +262,6 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -342,8 +329,6 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -357,9 +342,9 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("customer_id");
 
-                    b.Property<int>("DurationMonths")
+                    b.Property<int>("Duration")
                         .HasColumnType("int")
-                        .HasColumnName("duration_months");
+                        .HasColumnName("duration");
 
                     b.Property<string>("DurationPeriod")
                         .IsRequired()
@@ -377,13 +362,8 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("interest_method");
 
                     b.Property<decimal>("InterestRate")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("interest_rate");
-
-                    b.Property<string>("LoanNumber")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("loan_number");
 
                     b.Property<int>("LoanProductId")
                         .HasColumnType("int")
@@ -398,7 +378,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("modified_on");
 
                     b.Property<decimal>("PrincipalAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("principal_amount");
 
                     b.Property<DateTime>("ReleaseDate")
@@ -420,15 +400,15 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("status");
 
                     b.Property<decimal>("TotalFees")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("total_fees");
 
                     b.Property<decimal>("TotalInterest")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("total_interest");
 
                     b.Property<decimal>("TotalRepayment")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("total_repayment");
 
                     b.HasKey("Id")
@@ -450,10 +430,8 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<decimal>("CalculatedAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("calculated_amount");
 
                     b.Property<string>("CreatedBy")
@@ -466,7 +444,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("created_on");
 
                     b.Property<decimal?>("FeeAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("fee_amount");
 
                     b.Property<string>("FeeName")
@@ -475,7 +453,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("fee_name");
 
                     b.Property<decimal?>("FeePercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("fee_percentage");
 
                     b.Property<string>("FeeType")
@@ -510,8 +488,6 @@ namespace CSMF.WebMvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -552,7 +528,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("interest_method");
 
                     b.Property<decimal>("InterestRate")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("interest_rate");
 
                     b.Property<bool>("LatePenaltyEnabled")
@@ -564,7 +540,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("max_duration_value");
 
                     b.Property<decimal>("MaxPrincipalAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("max_principal_amount");
 
                     b.Property<int>("MinDurationValue")
@@ -572,7 +548,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("min_duration_value");
 
                     b.Property<decimal>("MinPrincipalAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("min_principal_amount");
 
                     b.Property<string>("ModifiedBy")
@@ -588,11 +564,11 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("penalty_calculation_base");
 
                     b.Property<decimal?>("PenaltyFixedAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("penalty_fixed_amount");
 
                     b.Property<decimal?>("PenaltyPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("penalty_percentage");
 
                     b.Property<string>("PenaltyType")
@@ -625,8 +601,6 @@ namespace CSMF.WebMvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
@@ -663,7 +637,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("modified_on");
 
                     b.Property<decimal>("PenaltyAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("penalty_amount");
 
                     b.Property<DateTime>("PenaltyDate")
@@ -685,15 +659,15 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("status");
 
                     b.HasKey("Id")
-                        .HasName("pk_penalty_transaction");
+                        .HasName("pk_penalty_transactions");
 
                     b.HasIndex("LoanApplicationId")
-                        .HasDatabaseName("ix_penalty_transaction_loan_application_id");
+                        .HasDatabaseName("ix_penalty_transactions_loan_application_id");
 
                     b.HasIndex("RepaymentScheduleId")
-                        .HasDatabaseName("ix_penalty_transaction_repayment_schedule_id");
+                        .HasDatabaseName("ix_penalty_transactions_repayment_schedule_id");
 
-                    b.ToTable("penalty_transaction", (string)null);
+                    b.ToTable("penalty_transactions", (string)null);
                 });
 
             modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.RepaymentSchedules.RepaymentSchedule", b =>
@@ -702,8 +676,6 @@ namespace CSMF.WebMvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
@@ -728,7 +700,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("due_date");
 
                     b.Property<decimal>("FeeAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("fee_amount");
 
                     b.Property<int>("InstallmentNumber")
@@ -736,7 +708,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("installment_number");
 
                     b.Property<decimal>("InterestAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("interest_amount");
 
                     b.Property<int>("LoanApplicationId")
@@ -752,11 +724,11 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("modified_on");
 
                     b.Property<decimal>("OutstandingPrincipal")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("outstanding_principal");
 
                     b.Property<decimal>("PrincipalAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("principal_amount");
 
                     b.Property<string>("Status")
@@ -765,7 +737,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("status");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("total_amount");
 
                     b.HasKey("Id")
@@ -784,10 +756,8 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<decimal>("AmountPaid")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("amount_paid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -804,11 +774,11 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("created_on");
 
                     b.Property<decimal>("FeePaid")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("fee_paid");
 
                     b.Property<decimal>("InterestPaid")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("interest_paid");
 
                     b.Property<int>("LoanApplicationId")
@@ -838,11 +808,11 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("payment_method");
 
                     b.Property<decimal>("PenaltyPaid")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("penalty_paid");
 
                     b.Property<decimal>("PrincipalPaid")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("principal_paid");
 
                     b.Property<int>("RepaymentScheduleId")
@@ -855,15 +825,15 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("status");
 
                     b.HasKey("Id")
-                        .HasName("pk_repayment_transaction");
+                        .HasName("pk_repayment_transactions");
 
                     b.HasIndex("LoanApplicationId")
-                        .HasDatabaseName("ix_repayment_transaction_loan_application_id");
+                        .HasDatabaseName("ix_repayment_transactions_loan_application_id");
 
                     b.HasIndex("RepaymentScheduleId")
-                        .HasDatabaseName("ix_repayment_transaction_repayment_schedule_id");
+                        .HasDatabaseName("ix_repayment_transactions_repayment_schedule_id");
 
-                    b.ToTable("repayment_transaction", (string)null);
+                    b.ToTable("repayment_transactions", (string)null);
                 });
 
             modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.Users.SystemUser", b =>
@@ -905,7 +875,7 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnName("lockout_enabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime")
                         .HasColumnName("lockout_end");
 
                     b.Property<string>("NormalizedEmail")
@@ -1001,8 +971,6 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("ClaimType")
                         .HasColumnType("longtext")
                         .HasColumnName("claim_type");
@@ -1031,8 +999,6 @@ namespace CSMF.WebMvc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("longtext")
@@ -1222,14 +1188,14 @@ namespace CSMF.WebMvc.Migrations
                         .HasForeignKey("LoanApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_penalty_transaction_loan_applications_loan_application_id");
+                        .HasConstraintName("fk_penalty_transactions_loan_applications_loan_application_id");
 
                     b.HasOne("CSMF.WebMvc.Domain.Entities.RepaymentSchedules.RepaymentSchedule", "RepaymentSchedule")
                         .WithMany("PenaltyTransactions")
                         .HasForeignKey("RepaymentScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_penalty_transaction_repayment_schedules_repayment_schedule_id");
+                        .HasConstraintName("fk_penalty_transactions_repayment_schedules_repayment_schedule_");
 
                     b.Navigation("LoanApplication");
 
@@ -1255,14 +1221,14 @@ namespace CSMF.WebMvc.Migrations
                         .HasForeignKey("LoanApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_repayment_transaction_loan_applications_loan_application_id");
+                        .HasConstraintName("fk_repayment_transactions_loan_applications_loan_application_id");
 
                     b.HasOne("CSMF.WebMvc.Domain.Entities.RepaymentSchedules.RepaymentSchedule", "RepaymentSchedule")
                         .WithMany("RepaymentTransactions")
                         .HasForeignKey("RepaymentScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_repayment_transaction_repayment_schedules_repayment_schedule");
+                        .HasConstraintName("fk_repayment_transactions_repayment_schedules_repayment_schedul");
 
                     b.Navigation("LoanApplication");
 

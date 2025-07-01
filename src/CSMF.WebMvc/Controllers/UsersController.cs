@@ -1,6 +1,10 @@
-﻿using CSMF.WebMvc.Domain.Constants;
+﻿using CSMF.WebMvc.Data;
+using CSMF.WebMvc.Domain.Constants;
+using CSMF.WebMvc.Domain.Entities.BranchUsers;
 using CSMF.WebMvc.Domain.Entities.Users;
+using CSMF.WebMvc.Models.Branches;
 using CSMF.WebMvc.Models.Users;
+using Humanizer;
 using Mapster;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,12 +12,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CSMF.WebMvc.Controllers
 {
     public class UsersController(
         UserManager<SystemUser> userManager,
-        RoleManager<IdentityRole> roleManager) : Controller
+        RoleManager<IdentityRole> roleManager,
+        ApplicationDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Index()
         {
@@ -40,17 +46,19 @@ namespace CSMF.WebMvc.Controllers
             return View(users);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var roles = roleManager.Roles
-                .Select(e => new RoleDto { Id = e.Id, Name = e.Name })
-                .ToList();
+            var roles = await GetRolesAsync();
+
+            var branches = await GetBranchesAsync();
             var viewModel = new UserCreateViewModel
             {
-                Roles = roles
+                Roles = roles,
+                Branches = branches,
             };
             return View(viewModel);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserCreateViewModel model)
@@ -58,6 +66,7 @@ namespace CSMF.WebMvc.Controllers
             if (!ModelState.IsValid)
             {
                 model.Roles = await GetRolesAsync();
+                model.Branches = await GetBranchesAsync();
                 return View(model);
             }
 
@@ -65,8 +74,10 @@ namespace CSMF.WebMvc.Controllers
             {
                 ModelState.AddModelError("SelectedRoles", "At least one role must be selected");
                 model.Roles = await GetRolesAsync();
+                model.Branches = await GetBranchesAsync();
                 return View(model);
             }
+
 
             var user = new SystemUser
             {
@@ -85,6 +96,11 @@ namespace CSMF.WebMvc.Controllers
                     await userManager.AddToRolesAsync(user, model.SelectedRoles);
                 }
 
+                if (model.SelectedBranches.Any())
+                {
+                    await SaveBranchUsersAsync(model.SelectedBranches, user.Id);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -96,12 +112,44 @@ namespace CSMF.WebMvc.Controllers
             }
 
             model.Roles = await GetRolesAsync();
+            model.Branches = await GetBranchesAsync();
+
             return View(model);
+        }
+
+        private async Task SaveBranchUsersAsync(int[] branches, string user)
+        {
+            var conditions = await dbContext.BranchUsers
+                .AsNoTracking()
+                .Where(b => b.UserId == user)
+                .ToArrayAsync();
+
+            if (conditions.Length != 0)
+            {
+                dbContext.BranchUsers.RemoveRange(conditions);
+            }
+
+            var branchUsers = branches.Select(b => new BranchUser
+            {
+                BranchId = b,
+                UserId = user,
+                CreatedBy = User.Identity.Name,
+                CreatedOn = DateTime.Now,
+            }).ToList();
+            await dbContext.BranchUsers.AddRangeAsync(branchUsers);
+            await dbContext.SaveChangesAsync();
         }
         private async Task<List<RoleDto>> GetRolesAsync()
         {
             return await roleManager.Roles
                 .Select(r => new RoleDto { Id = r.Id, Name = r.Name })
+                .ToListAsync();
+        }
+        private async Task<List<BranchReadViewModel>> GetBranchesAsync()
+        {
+            return await dbContext.Branches
+                .AsNoTracking()
+                .ProjectToType<BranchReadViewModel>()
                 .ToListAsync();
         }
         [HttpGet]
@@ -113,6 +161,12 @@ namespace CSMF.WebMvc.Controllers
 
             var selectedRoles = await userManager.GetRolesAsync(user);
 
+            var selectedBranches = await dbContext.BranchUsers
+                .AsNoTracking()
+                .Where(b => b.UserId == id)
+                .Select(b => b.BranchId)
+                .ToArrayAsync();
+
             var viewModel = new UpdateCreateViewModel
             {
                 Id = id,
@@ -120,9 +174,9 @@ namespace CSMF.WebMvc.Controllers
                 LastName = user.LastName,
                 Email = user.Email,
                 SelectedRoles = selectedRoles.ToArray(),
-                Roles = await roleManager.Roles
-                    .Select(r => new RoleDto { Name = r.Name })
-                    .ToListAsync()
+                Roles = await GetRolesAsync(),
+                Branches = await GetBranchesAsync(),
+                SelectedBranches = selectedBranches,
             };
 
             return View(viewModel);
@@ -133,9 +187,8 @@ namespace CSMF.WebMvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.Roles = await roleManager.Roles
-                    .Select(r => new RoleDto { Name = r.Name })
-                    .ToListAsync();
+                model.Roles = await GetRolesAsync();
+                model.Branches = await GetBranchesAsync();
                 return View(model);
             }
 
@@ -155,9 +208,9 @@ namespace CSMF.WebMvc.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
-                model.Roles = await roleManager.Roles
-                    .Select(r => new RoleDto { Name = r.Name })
-                    .ToListAsync();
+                model.Roles = await GetRolesAsync();
+                model.Branches = await GetBranchesAsync();
+
                 return View(model);
             }
 
@@ -170,13 +223,12 @@ namespace CSMF.WebMvc.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
-                model.Roles = await roleManager.Roles
-                    .Select(r => new RoleDto { Name = r.Name })
-                    .ToListAsync();
+                model.Roles = await GetRolesAsync();
+                model.Branches = await GetBranchesAsync();
                 return View(model);
             }
 
-            if (model.SelectedRoles?.Any() == true)
+            if (model.SelectedRoles.Length != 0)
             {
                 var addRoleResult = await userManager.AddToRolesAsync(user, model.SelectedRoles);
                 if (!addRoleResult.Succeeded)
@@ -185,12 +237,16 @@ namespace CSMF.WebMvc.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                    model.Roles = await roleManager.Roles
-                        .Select(r => new RoleDto { Name = r.Name })
-                        .ToListAsync();
+                    model.Roles = await GetRolesAsync();
                     return View(model);
                 }
             }
+
+            if (model.SelectedBranches.Length != 0)
+            {
+                await SaveBranchUsersAsync(model.SelectedBranches, user.Id);
+            }
+
 
             return RedirectToAction(nameof(Index));
         }

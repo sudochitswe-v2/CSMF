@@ -16,7 +16,7 @@
 
 * [x] Add Customer
 * [x] Edit Customer
-* [x] Delete Customer
+* [ ] Delete Customer
 * [x] View Customer Details
 * [ ] Search Customers
 
@@ -61,10 +61,10 @@
 
 #### **Loan Product Management** *(Est. 5 days)*
 
-* [ ] Add Loan Product
-* [ ] Edit Loan Product
-* [ ] Delete Loan Product
-* [ ] Define Interest Rates & Terms
+* [x] Add Loan Product
+* [x] Edit Loan Product
+* [x] Delete Loan Product
+* [x] Define Interest Rates & Terms
 
 #### **Loan Fee Management** *(Est. 3 days)*
 
@@ -75,7 +75,7 @@
 
 #### **Loan Application Management** *(Est. 7 days)*
 
-* [ ] Apply for Loan
+* [x] Apply for Loan
 * [ ] View Application Details
 * [ ] Edit Application
 * [ ] Cancel Application

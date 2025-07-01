@@ -17,7 +17,6 @@ namespace CSMF.WebMvc.Domain.Entities.RepaymentTransactions
         public string PaymentMethod { get; set; }
         public string Status { get; set; }
         public string Notes { get; set; }
-        public DateTime CreatedAt { get; set; }
 
         // Navigation Properties
         public virtual LoanApplication LoanApplication { get; set; }

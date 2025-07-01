@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CSMF.WebMvc.Domain.Constants;
+using System.ComponentModel.DataAnnotations;
 
 namespace CSMF.WebMvc.Domain.Validations.Loans
 {
@@ -6,22 +7,16 @@ namespace CSMF.WebMvc.Domain.Validations.Loans
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if(validationContext.ObjectInstance is LoanCreateViewModel model)
+            if (validationContext.ObjectInstance is LoanCreateViewModel model && model.LatePenaltyEnabled && value == null)
             {
-                if (model.LatePenaltyEnabled && value == null)
-                {
-                    return new ValidationResult(ErrorMessage);
-                }
+                return new ValidationResult(ErrorMessage);
             }
 
-            if(validationContext.ObjectInstance is LoanEditViewModel editModel)
+            if (validationContext.ObjectInstance is LoanEditViewModel editModel && editModel.LatePenaltyEnabled && value == null)
             {
-                if (editModel.LatePenaltyEnabled && value == null)
-                {
-                    return new ValidationResult(ErrorMessage);
-                }
+                return new ValidationResult(ErrorMessage);
             }
-            
+
 
             return ValidationResult.Success;
         }

@@ -57,10 +57,12 @@ namespace CSMF.WebMvc.Models.Loans
         public ICollection<string> PenaltyTypeOptions => [.. Enum.GetNames<DefinePenaltyTypes>()];
         [RequiredIfPenaltyEnabled(ErrorMessage = "Penalty type is required when late penalty is enabled.")]
         public string? PenaltyType { get; set; }
-        [RequiredIfPenaltyEnabled(ErrorMessage = "Penalty percentage is required when late penalty is enabled.")]
+        //[RequiredIfPenaltyEnabled(ErrorMessage = "Penalty percentage is required when late penalty is enabled.")]
+        [RequiredIfPenaltyTypeIfPercentageBase(ErrorMessage = "Penalty percentage is required when penalty type is percentage based.")]
         public decimal? PenaltyPercentage { get; set; }
 
-        [RequiredIfPenaltyEnabled(ErrorMessage = "Penalty fixed amount is required when late penalty is enabled.")]
+        //[RequiredIfPenaltyEnabled(ErrorMessage = "Penalty fixed amount is required when late penalty is enabled.")]
+        [RequiredIfPenaltyTypeIsFixed(ErrorMessage = "Penalty fixed amount is required when penalty type is fixed.")]
         public decimal? PenaltyFixedAmount { get; set; }
 
         // Base for penalty calculation, e.g., "Principal", "Interest", "Total"
@@ -75,7 +77,7 @@ namespace CSMF.WebMvc.Models.Loans
 
         // Type of recurring penalty, e.g., "Daily", "Weekly", "Monthly"
         [RequiredIfPenaltyEnabled(ErrorMessage = "Recurring penalty type is required when late penalty is enabled.")]
-        public string? RecurringPenaltyType { get; set; } 
+        public string? RecurringPenaltyType { get; set; }
         #endregion
     }
 }

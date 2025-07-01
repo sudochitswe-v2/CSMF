@@ -7,23 +7,27 @@
 @inject UserManager<SystemUser> _userManager
 @inject SignInManager<SystemUser> _signInManager
 @{
-    bool ShouldShow(string controller)
-    {
-        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
-        return controller == currentController;
-    }
-
     bool ShouldActive(string action, string controller)
     {
         var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
         var currentAction = ViewContext.RouteData.Values["Action"]?.ToString() ?? string.Empty;
-        return action == currentAction && controller == currentController;
+
+        return string.Equals(action, currentAction, StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase);
+    }
+
+    bool ShouldShow(string controller)
+    {
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? string.Empty;
+        return string.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase);
     }
 
     var navigation = GetDefaultNavData();
 }
 
 <div class="accordion" id="sidebarAccordion">
+
+
     @foreach (var item in navigation.Items)
     {
         if (!item.IsAccordion)
@@ -49,8 +53,8 @@
                         <div class="nav flex-column">
                             @foreach (var child in item.Children)
                             {
-                                <a class="nav-link text-secondary @(ShouldActive(child.Action, item.Controller) ? "fw-bold text-dark text-decoration-underline" : "") py-2 px-4"
-                                   asp-controller="@item.Controller" asp-action="@child.Action">
+                                <a class="nav-link text-secondary @(ShouldActive(child.Action, child.Controller ?? item.Controller) ? "fw-bold text-dark text-decoration-underline" : "") py-2 px-4"
+                                   asp-controller="@(child.Controller ?? item.Controller)" asp-action="@child.Action">
                                     <i class="bi @child.Icon me-2"></i> @child.Title
                                 </a>
                             }
@@ -85,3 +89,19 @@
         </div>
     }
 </div>
+@section Scripts {
+    <script>
+         function selectBranch(branchId, branchName) {
+    // Set cookie with 30 day expiration
+    document.cookie = `CurrentBranchId=${branchId}; path=/; max-age=${60*60*24*30}`;
+    document.cookie = `CurrentBranchName=${encodeURIComponent(branchName)}; path=/; max-age=${60*60*24*30}`;
+    
+    // Update dropdown display
+    document.getElementById('branchDropdown').innerHTML = 
+        `<i class="bi bi-building me-2"></i>${branchName}`;
+    
+    // Reload to apply branch filtering
+    window.location.reload();
+}
+    </script>
+}

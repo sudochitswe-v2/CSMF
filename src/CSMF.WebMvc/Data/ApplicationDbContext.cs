@@ -13,10 +13,11 @@ using CSMF.WebMvc.Domain.Entities.Branches;
 using CSMF.WebMvc.Domain.Entities.BranchUsers;
 using CSMF.WebMvc.Domain.Entities.Documents;
 using CSMF.WebMvc.Domain.Entities.Grantors;
+using CSMF.WebMvc.Domain.Entities.PenaltyTransactions;
 
 namespace CSMF.WebMvc.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<SystemUser,IdentityRole,string>
+    public class ApplicationDbContext : IdentityDbContext<SystemUser, IdentityRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -32,6 +33,6 @@ namespace CSMF.WebMvc.Data
         public DbSet<LoanFee> LoanFees { get; set; }
         public DbSet<RepaymentSchedule> RepaymentSchedules { get; set; }
         public DbSet<RepaymentTransaction> RepaymentTransactions { get; set; }
-        public DbSet<RepaymentTransaction> PenaltyTransactions { get; set; }
+        public DbSet<PenaltyTransaction> PenaltyTransactions { get; set; }
     }
 }

@@ -71,16 +71,16 @@ public class NavGroupExtentions
                         Action = "Create",
                         Icon = "bi-person-plus"
                     },
-                    new NavigationItem {
-                        Title = "Documents",
-                        Action = "Documents",
-                        Icon = "bi-file-earmark-text"
-                    },
-                    new NavigationItem {
-                        Title = "Guarantors",
-                        Action = "Guarantors",
-                        Icon = "bi-person-bounding-box"
-                    },
+                    //new NavigationItem {
+                    //    Title = "Documents",
+                    //    Action = "Documents",
+                    //    Icon = "bi-file-earmark-text"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Guarantors",
+                    //    Action = "Guarantors",
+                    //    Icon = "bi-person-bounding-box"
+                    //},
                 ]
         };
     }
@@ -100,21 +100,36 @@ public class NavGroupExtentions
                         Icon = "bi-box-seam"
                     },
                     new NavigationItem {
-                        Title = "Loan Applications",
-                        Action = "Applications",
-                        Icon = "bi-folder2-open"
-                    },
-                    new NavigationItem {
-                        Title = "New Application",
-                        Action = "CreateApplication",
-                        Icon = "bi-journal-plus"
-                    },
-                    new NavigationItem {
                         Title = "Loan Fees",
                         Action = "Fees",
                         Icon = "bi-cash-stack"
                     },
                 }
+        };
+    }
+    private static NavigationItem LoanApplications()
+    {
+        return new NavigationItem
+        {
+            Title = "Loan Applications",
+            Controller = "LoanApplications",
+            Icon = "bi-folder2-open",
+            Children = new List<NavigationItem>
+            {
+                new NavigationItem
+                    {
+                        Title = "Applications",
+                        Action = "Index",
+                        Icon = "bi-folder2-open"
+                    },
+                new NavigationItem
+                    {
+                        Title = "New Application",
+                        Action = "Create",
+                        Icon = "bi-journal-plus"
+                    }
+            }
+
         };
     }
     private static NavigationItem Reports()
@@ -282,7 +297,8 @@ public class NavGroupExtentions
             Branches(),
             Customers(),
             Loans(),
-            Repayments(),
+            LoanApplications(),
+            //Repayments(),
             Reports(),
             UsersAndRoles(),
             Settings(),

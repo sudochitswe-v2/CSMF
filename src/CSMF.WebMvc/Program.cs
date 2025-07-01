@@ -1,23 +1,31 @@
-using CSMF.WebMvc.Data;
+using Carter;
+using CSMF.WebMvc.Data.Seeders;
 using CSMF.WebMvc.Domain.Entities.Users;
-using CSMF.WebMvc.Migrations.Seeders;
+using CSMF.WebMvc.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("MySql") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseMySql(connectionString, new MariaDbServerVersion(new Version(11, 4, 3)))
+    options.UseMySQL(
+        connectionString//,
+                        //new MariaDbServerVersion(new Version(11, 4, 3))
+        )
     .UseSnakeCaseNamingConvention();
 });
 builder.Services.AddIdentity<SystemUser, IdentityRole>(options =>
@@ -45,6 +53,11 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AuthorizeFilter(policy));
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddCarter();
+
+builder.Services.AddScoped<IHttpContextExtractorService, HttpContextExtractorService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -54,9 +67,9 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    app.UseExceptionHandler("/Error/InternalServerError");
     app.UseHsts();
 }
-app.UseExceptionHandler("/Error/InternalServerError");
 app.UseStatusCodePagesWithReExecute("/Error/NotFound");
 
 
@@ -71,6 +84,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+app.MapCarter();
+
 
 app.RunAsync().Wait();

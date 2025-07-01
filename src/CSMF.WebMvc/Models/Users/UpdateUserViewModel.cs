@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CSMF.WebMvc.Models.Branches;
+using System.ComponentModel.DataAnnotations;
 
 namespace CSMF.WebMvc.Models.Users
 {
@@ -25,7 +26,13 @@ namespace CSMF.WebMvc.Models.Users
         [Required(ErrorMessage = "Roles is required")]
         public string[] SelectedRoles { get; set; } = [];
 
+
+        [Display(Name = "Branches")]
+        [Required(ErrorMessage = "Branch Assignment is required")]
+        public int[] SelectedBranches { get; set; } = [];
+
         // For dropdown list
         public List<RoleDto> Roles { get; set; } = [];
+        public ICollection<BranchReadViewModel> Branches { get; set; } = [];
     }
 }

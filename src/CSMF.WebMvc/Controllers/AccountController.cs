@@ -6,11 +6,15 @@ using CSMF.WebMvc.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using CSMF.WebMvc.Domain.Entities.Users;
+using CSMF.WebMvc.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using CSMF.WebMvc.Models.Branches;
 
 namespace CSMF.WebMvc.Controllers
 {
     [AllowAnonymous]
-    public class AccountController(UserManager<SystemUser> userManager) : Controller
+    public class AccountController(UserManager<SystemUser> userManager, ApplicationDbContext dbContext) : Controller
     {
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
@@ -55,6 +59,15 @@ namespace CSMF.WebMvc.Controllers
             {
                 claims.Add(new(ClaimTypes.Role, role));
             }
+
+            var branches = await dbContext.BranchUsers
+                .AsNoTracking()
+                .Where(bu => bu.UserId == user.Id)
+                .Select(bu => bu.Branch)
+                .ToListAsync();
+            // Store all branches as JSON
+            var branchData = branches.Select(b => new BranchInfoDto(b.Id.ToString(), b.Name));
+            claims.Add(new Claim("Branches", JsonSerializer.Serialize(branchData)));
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);

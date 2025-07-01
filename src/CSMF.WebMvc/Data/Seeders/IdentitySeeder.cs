@@ -2,7 +2,7 @@
 using CSMF.WebMvc.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 
-namespace CSMF.WebMvc.Migrations.Seeders
+namespace CSMF.WebMvc.Data.Seeders
 {
     public static class IdentitySeederExtensions
     {

@@ -12,15 +12,16 @@ namespace CSMF.WebMvc.Domain.Entities.LoanApplications
     {
         public int LoanProductId { get; set; }
         public int CustomerId { get; set; }
-        public string LoanNumber { get; set; }
         public string Status { get; set; }
         public decimal PrincipalAmount { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public int DurationMonths { get; set; }
+        public int Duration { get; set; }
         public string DurationPeriod { get; set; }
+
         public string InterestMethod { get; set; }
         public decimal InterestRate { get; set; }
         public string InterestCycle { get; set; }
+
         public string RepaymentCycle { get; set; }
         public int RepaymentDay { get; set; }
         public decimal TotalInterest { get; set; }
@@ -31,8 +32,8 @@ namespace CSMF.WebMvc.Domain.Entities.LoanApplications
         public virtual LoanProduct LoanProduct { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<LoanFee> LoanFees { get; set; } = new List<LoanFee>();
-        public virtual ICollection<RepaymentSchedule> RepaymentSchedules { get; set; } = new List<RepaymentSchedule>();
-        public virtual ICollection<RepaymentTransaction> RepaymentTransactions { get; set; } = new List<RepaymentTransaction>();
-        public virtual ICollection<PenaltyTransaction> PenaltyTransactions { get; set; } = new List<PenaltyTransaction>();
+        public virtual ICollection<RepaymentSchedule> RepaymentSchedules { get; set; } = [];
+        public virtual ICollection<RepaymentTransaction> RepaymentTransactions { get; set; } = [];
+        public virtual ICollection<PenaltyTransaction> PenaltyTransactions { get; set; } = [];
     }
 }

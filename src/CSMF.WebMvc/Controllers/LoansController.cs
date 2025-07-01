@@ -1,6 +1,7 @@
 using CSMF.WebMvc.Data;
 using CSMF.WebMvc.Domain.Entities.LoanProducts;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

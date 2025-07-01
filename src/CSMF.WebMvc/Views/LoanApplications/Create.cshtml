@@ -1,0 +1,195 @@
+﻿
+@model LoanApplicationCreateViewModel
+@{
+    ViewData["Title"] = "Apply for Loan";
+}
+
+<div class="container mt-4">
+    <!-- Validation Summary -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger mb-4">
+            <strong>Please fix the following errors:</strong>
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-action="Create" method="post">
+        <input type="hidden" asp-for="CustomerId" />
+        <input id="XLoanProductId" type="hidden" asp-for="LoanProductId" />
+
+        <!-- Selected Customer Card -->
+        <div class="card bg-light shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Customer</h6>
+                <p class="card-text fw-bold fs-5">@Model.SelectedCustomer?.FirstName @Model.SelectedCustomer?.LastName</p>
+                <p class="card-text text-muted">
+                    <i class="bi bi-person-badge me-2"></i>NRC: @Model.SelectedCustomer?.IdentificationNumber
+                </p>
+                <a asp-controller="LoanApplications" asp-action="SelectCustomer"
+                   class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-search me-2"></i>Change Customer
+                </a>
+            </div>
+        </div>
+
+        <!-- Loan Product Selection -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Select Loan Product</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label asp-for="LoanProductId" class="form-label"></label>
+                        <select asp-for="LoanProductId" class="form-select" id="LoanProductX"
+                                asp-items="@(new SelectList(Model.LoanProducts, "Id", "ProductTitle"))">
+                            <option value="">-- Select Loan Product --</option>
+                        </select>
+                        <span asp-validation-for="LoanProductId" class="text-danger d-block mt-1"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <label asp-for="Status" class="form-label"></label>
+                        <select asp-for="Status" class="form-select" id="LoanProductX"
+                                asp-items="@(new SelectList(Model.StatusOptions))">
+                            <option value="">-- Select Status --</option>
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger d-block mt-1"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Info Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">Application Info</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="PrincipalAmount" class="form-label"></label>
+                        <input id="XPrincipalAmount" asp-for="PrincipalAmount" class="form-control" />
+                        <small class="form-text text-muted">Enter principal amount</small>
+                        <span asp-validation-for="PrincipalAmount" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="ReleaseDate" class="form-label"></label>
+                        <input asp-for="ReleaseDate" class="form-control" type="date" />
+                        <span asp-validation-for="ReleaseDate" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Duration" class="form-label"></label>
+                        <input id="XDuration" asp-for="Duration" class="form-control" />
+                        <small class="form-text text-muted">e.g., 6 months or 2 years</small>
+                        <span asp-validation-for="Duration" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="DurationPeriod" class="form-label"></label>
+                        <select id="XDurationPeriod" asp-for="DurationPeriod" class="form-select"
+                                asp-items="@(new SelectList(Model.DurationPeriodOptions))">
+                            <option value="">-- Select Duration Period --</option>
+                        </select>
+                        <span asp-validation-for="DurationPeriod" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Interest Section Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-warning text-white">
+                <h5 class="card-title mb-0">Interest Settings</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="InterestMethod" class="form-label"></label>
+                        <select id="XInterestMethod" asp-for="InterestMethod" class="form-select"
+                                asp-items="@(new SelectList(Model.InterestMethodOptions))">
+                            <option value="">-- Select Interest Method --</option>
+                        </select>
+                        <span asp-validation-for="InterestMethod" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="InterestRate" class="form-label"></label>
+                        <input id="XInterestRate" asp-for="InterestRate" class="form-control" />
+                        <small class="form-text text-muted">e.g., 5% interest rate</small>
+                        <span asp-validation-for="InterestRate" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="InterestCycle" class="form-label"></label>
+                        <select id="XInterestCycle" asp-for="InterestCycle" class="form-select"
+                                asp-items="@(new SelectList(Model.TimeCycleOptions))">
+                            <option value="">-- Select Interest Cycle --</option>
+                        </select>
+                        <span asp-validation-for="InterestCycle" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Repayment Section Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">Repayment Settings</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="RepaymentCycle" class="form-label"></label>
+                        <select id="XRepaymentCycle" asp-for="RepaymentCycle" class="form-select"
+                                asp-items="@(new SelectList(Model.TimeCycleOptions))">
+                            <option value="">-- Select Repayment Cycle --</option>
+                        </select>
+                        <span asp-validation-for="RepaymentCycle" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="RepaymentDay" class="form-label"></label>
+                        <select asp-for="RepaymentDay" class="form-select"
+                                asp-items="@(new SelectList(Model.RepaymentDayOptions, Model.RepaymentDay))">
+                            <option value="">-- Select Day --</option>
+                        </select>
+                        <span asp-validation-for="RepaymentDay" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2 d-md-flex justify-content-between mt-4 mb-4">
+            <a asp-controller="LoanApplications" asp-action="Index"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-currency-dollar me-2"></i>Create Application
+            </button>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+
+    <script src="~/js/LoanApplicationCreate.js"></script>
+
+}
+

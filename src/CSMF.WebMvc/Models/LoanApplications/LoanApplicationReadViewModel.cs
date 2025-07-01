@@ -5,10 +5,10 @@ public class LoanApplicationReadViewModel
     public int Id { get; set; }
     public int LoanProductId { get; set; }
     public int CustomerId { get; set; }
-    public string LoanNumber { get; set; }
     public string Status { get; set; }
     public decimal PrincipalAmount { get; set; }
     public DateTime ReleaseDate { get; set; }
+
     public int DurationMonths { get; set; }
     public string DurationPeriod { get; set; }
     public string InterestMethod { get; set; }
@@ -16,8 +16,6 @@ public class LoanApplicationReadViewModel
     public string InterestCycle { get; set; }
     public string RepaymentCycle { get; set; }
     public int RepaymentDay { get; set; }
-    public decimal TotalInterest { get; set; }
-    public decimal TotalFees { get; set; }
-    public decimal TotalRepayment { get; set; }
     public DateTime CreatedOn { get; set; }
+    public virtual CustomerReadViewModel Customer { get; set; }
 }

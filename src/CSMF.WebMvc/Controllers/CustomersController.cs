@@ -3,6 +3,7 @@ using CSMF.WebMvc.Domain.Entities.Customers;
 using CSMF.WebMvc.Models.Branches;
 using CSMF.WebMvc.Models.Customers;
 using CSMF.WebMvc.Models.Users;
+using CSMF.WebMvc.Services;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,14 +11,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CSMF.WebMvc.Controllers
 {
-    public class CustomersController(ApplicationDbContext dbContext) : Controller
+    public class CustomersController(IHttpContextExtractorService httpExtractor, ApplicationDbContext dbContext) : Controller
     {
         public IActionResult Index()
         {
+            var branches = httpExtractor.GetBranchIdFromUserClaims();
+
+
             var customers = dbContext.Customers
                              .AsNoTracking()
                              .Include(c => c.Branch)
                              .ProjectToType<CustomerReadViewModel>()
+                             .Where(c => branches.Contains(c.BranchId))
                              .ToList();
             return View(customers);
         }
@@ -134,14 +139,16 @@ namespace CSMF.WebMvc.Controllers
 
             return false;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            var branches = httpExtractor.GetBranchIdFromUserClaims();
+
             var customer = await dbContext.Customers
                 .Include(c => c.Branch) // Include branch
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id && branches.Contains(c.BranchId));
 
             if (customer == null)
             {
@@ -190,14 +197,15 @@ namespace CSMF.WebMvc.Controllers
         {
             var customer = dbContext.Customers
                 .AsNoTracking()
-                .Include(c=>c.Branch)
-                .Include(c=>c.Documents)
-                .Include(c=>c.Grantors)
-                .Include(c=>c.LoanApplications)
+                .Include(c => c.Branch)
+                .Include(c => c.Documents)
+                .Include(c => c.Grantors)
+                .Include(c => c.LoanApplications)
                 .FirstOrDefault(e => e.Id.Equals(id));
             if (customer is null) return NotFound();
             var viewModel = customer.Adapt<CustomerReadDetailViewModel>();
             return View(viewModel);
         }
+
     }
 }

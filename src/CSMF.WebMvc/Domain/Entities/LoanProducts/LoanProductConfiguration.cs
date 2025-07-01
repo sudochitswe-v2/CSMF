@@ -10,27 +10,27 @@ public class LoanProductConfiguration : IEntityTypeConfiguration<LoanProduct>
         builder.HasKey(e => e.Id);
         builder.Property(e => e.ProductTitle).IsRequired().HasMaxLength(200);
         builder.Property(e => e.Description).HasColumnType("text");
-        builder.Property(e => e.MinPrincipalAmount).HasColumnType("decimal(18,2)").HasPrecision(18,2);
-        builder.Property(e => e.MaxPrincipalAmount).HasColumnType("decimal(18,2)").HasPrecision(18, 2);
+        builder.Property(e => e.MinPrincipalAmount).HasConversion<decimal>().HasPrecision(18,2);
+        builder.Property(e => e.MaxPrincipalAmount).HasConversion<decimal>().HasPrecision(18, 2);
 
         builder.Property(e => e.DurationPeriod).HasMaxLength(10);
         builder.Property(e => e.DurationType).HasMaxLength(10);
         builder.Property(e => e.MinDurationValue).IsRequired();
         builder.Property(e => e.MaxDurationValue).IsRequired(false);
         builder.Property(e => e.InterestMethod).HasMaxLength(50);
-        builder.Property(e => e.InterestRate).HasColumnType("decimal(5,4)").HasPrecision(5, 4);
+        builder.Property(e => e.InterestRate).HasConversion<decimal>().HasPrecision(5, 4);
         builder.Property(e => e.InterestCycle).HasMaxLength(50);
         builder.Property(e => e.RepaymentCycle).HasMaxLength(50);
 
         builder.Property(e => e.LatePenaltyEnabled).IsRequired().HasDefaultValue(false);
         builder.Property(e => e.PenaltyType).IsRequired(false).HasMaxLength(50);
         builder.Property(e => e.PenaltyPercentage)
-               .IsRequired(false).HasColumnType("decimal(5,4)").HasPrecision(5, 4);
+               .IsRequired(false).HasConversion<decimal>().HasPrecision(5, 4);
         builder.Property(e => e.PenaltyFixedAmount)
-               .IsRequired(false).HasColumnType("decimal(18,2)").HasPrecision(18, 2);
+               .IsRequired(false).HasConversion<decimal>().HasPrecision(18, 2);
         builder.Property(e => e.PenaltyCalculationBase).IsRequired(false).HasMaxLength(50);
         builder.Property(e => e.RecurringPenaltyType).IsRequired(false).HasMaxLength(50);
-        
+
         builder.Property(e => e.GracePeriodDays).IsRequired(false);
 
         builder.Property(c => c.CreatedOn).IsRequired().HasColumnType("datetime");
@@ -38,7 +38,8 @@ public class LoanProductConfiguration : IEntityTypeConfiguration<LoanProduct>
         builder.Property(c => c.ModifiedOn).HasColumnType("datetime");
         builder.Property(c => c.ModifiedBy).HasMaxLength(50);
         builder.HasIndex(e => e.ProductTitle).IsUnique();
-        
-        
+
+
     }
+
 }
