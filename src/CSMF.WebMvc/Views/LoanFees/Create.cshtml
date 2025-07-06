@@ -1,0 +1,71 @@
+﻿@model LoanFeeCreateViewModel
+@{
+    ViewData["Title"] = "Add New Loan Fee";
+}
+
+<div class="container mt-4">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger mb-4">
+            <strong>Please fix the following errors:</strong>
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-action="Create" method="post">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Loan Fee Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="FeeName" class="form-label"></label>
+                        <input asp-for="FeeName" class="form-control" />
+                        <span asp-validation-for="FeeName" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="FeeType" class="form-label"></label>
+                        <select asp-for="FeeType" class="form-select"
+                            asp-items="@(new SelectList(Model.LoanFeeTypeOptions))">
+                            <option value="">-- Select Type --</option>
+                        </select>
+                        <span asp-validation-for="FeeType" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="FeePercentage" class="form-label"></label>
+                        <input asp-for="FeePercentage" class="form-control" />
+                        <small class="form-text text-muted">e.g., 5% of principal</small>
+                        <span asp-validation-for="FeePercentage" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="FeeAmount" class="form-label"></label>
+                        <input asp-for="FeeAmount" class="form-control" />
+                        <small class="form-text text-muted">Fixed amount</small>
+                        <span asp-validation-for="FeeAmount" class="text-danger d-block mt-1"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-grid gap-2 d-md-flex justify-content-between mt-4 mb-4">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-currency-dollar me-2"></i>Create Loan Fee
+            </button>
+        </div>
+    </form>
+</div>

@@ -3,6 +3,7 @@ using System;
 using CSMF.WebMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSMF.WebMvc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706105702_ChangeEntityNameFromLoanFeesToLoanApplicationFees")]
+    partial class ChangeEntityNameFromLoanFeesToLoanApplicationFees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,8 +354,8 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("fee_name");
 
-                    b.Property<int?>("FeePercentage")
-                        .HasColumnType("int")
+                    b.Property<decimal?>("FeePercentage")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("fee_percentage");
 
                     b.Property<string>("FeeType")
@@ -480,54 +483,6 @@ namespace CSMF.WebMvc.Migrations
                         .HasDatabaseName("ix_loan_applications_loan_product_id");
 
                     b.ToTable("loan_applications", (string)null);
-                });
-
-            modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.LoanFees.LoanFee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_on");
-
-                    b.Property<decimal>("FeeAmount")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("fee_amount");
-
-                    b.Property<string>("FeeName")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("fee_name");
-
-                    b.Property<int>("FeePercentage")
-                        .HasColumnType("int")
-                        .HasColumnName("fee_percentage");
-
-                    b.Property<string>("FeeType")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("fee_type");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
-                        .HasColumnName("modified_by");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("modified_on");
-
-                    b.HasKey("Id")
-                        .HasName("pk_loan_fees");
-
-                    b.ToTable("loan_fees", (string)null);
                 });
 
             modelBuilder.Entity("CSMF.WebMvc.Domain.Entities.LoanProducts.LoanProduct", b =>

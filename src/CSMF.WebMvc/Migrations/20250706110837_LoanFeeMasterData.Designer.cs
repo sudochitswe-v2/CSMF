@@ -3,6 +3,7 @@ using System;
 using CSMF.WebMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSMF.WebMvc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706110837_LoanFeeMasterData")]
+    partial class LoanFeeMasterData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,8 +354,8 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("fee_name");
 
-                    b.Property<int?>("FeePercentage")
-                        .HasColumnType("int")
+                    b.Property<decimal?>("FeePercentage")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("fee_percentage");
 
                     b.Property<string>("FeeType")
@@ -507,8 +510,8 @@ namespace CSMF.WebMvc.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("fee_name");
 
-                    b.Property<int>("FeePercentage")
-                        .HasColumnType("int")
+                    b.Property<decimal>("FeePercentage")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("fee_percentage");
 
                     b.Property<string>("FeeType")

@@ -35,7 +35,7 @@
 * [x] Delete Document
 * [ ] Tag Document Type
 
-####  **User & Role Management** *(Est. 5 days)*
+####  ** User & Role Management** *(Est. 5 days)*
 
 * [x] Create User
 * [x] Edit User

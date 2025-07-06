@@ -101,7 +101,8 @@ public class NavGroupExtentions
                     },
                     new NavigationItem {
                         Title = "Loan Fees",
-                        Action = "Fees",
+                        Controller = "LoanFees",
+                        Action = "Index",
                         Icon = "bi-cash-stack"
                     },
                 }

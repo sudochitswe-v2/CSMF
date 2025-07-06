@@ -1,6 +1,6 @@
 ﻿using CSMF.WebMvc.Domain.Abstractions;
 using CSMF.WebMvc.Domain.Entities.Customers;
-using CSMF.WebMvc.Domain.Entities.LoanFees;
+using CSMF.WebMvc.Domain.Entities.LoanApplicationFees;
 using CSMF.WebMvc.Domain.Entities.LoanProducts;
 using CSMF.WebMvc.Domain.Entities.PenaltyTransactions;
 using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
@@ -31,7 +31,7 @@ namespace CSMF.WebMvc.Domain.Entities.LoanApplications
         // Navigation Properties
         public virtual LoanProduct LoanProduct { get; set; }
         public virtual Customer Customer { get; set; }
-        public virtual ICollection<LoanFee> LoanFees { get; set; } = new List<LoanFee>();
+        public virtual ICollection<LoanApplicationFee> LoanFees { get; set; } = new List<LoanApplicationFee>();
         public virtual ICollection<RepaymentSchedule> RepaymentSchedules { get; set; } = [];
         public virtual ICollection<RepaymentTransaction> RepaymentTransactions { get; set; } = [];
         public virtual ICollection<PenaltyTransaction> PenaltyTransactions { get; set; } = [];

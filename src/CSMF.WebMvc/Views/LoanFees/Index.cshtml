@@ -1,0 +1,66 @@
+﻿@model ICollection<LoanFeeReadViewModel>
+@{
+    ViewData["Title"] = "Loan Fees";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>New Loan Fee
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.FeeName</td>
+                        <td>@item.FeeType</td>
+                        @if (item.FeeType.Equals(DefinedLoanFeeTypes.PercentageOnPrincipal.ToString(),
+                                        StringComparison.OrdinalIgnoreCase))
+                        {
+                            <td>@item.FeePercentage%</td>
+                        }
+                        else
+                        {
+                            <td>@item.FeeAmount</td>
+                        }
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Are you sure you want to delete @item.FeeName?');">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    }
+    else
+    {
+        <div class="alert alert-info text-center">No loan fees found.</div>
+    }
+
+    <div class="mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
