@@ -1,0 +1,115 @@
+﻿@model RepaymentTransactionCreateViewModel
+@{
+    ViewData["Title"] = "Record Repayment";
+}
+
+<div class="container mt-4">
+    <!-- Validation Summary -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger mb-4">
+            <strong>Please fix the following errors:</strong>
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+<form asp-action="Create" method="post">
+
+    <!-- Hidden Fields -->
+    <input type="hidden" asp-for="LoanApplicationId" />
+
+    <!-- Payment Info Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Payment Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <label asp-for="RepaymentScheduleId" class="form-label">Installment </label>
+                    <select asp-for="RepaymentScheduleId" class="form-select"
+                            asp-items="@new SelectList(Model.Schdules,nameof(InstallmentDto.Id),nameof(InstallmentDto.Name))">
+                        <option value="">-- Select Installment--</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="PaymentDate" class="form-label"></label>
+                    <input asp-for="PaymentDate" class="form-control" type="date" />
+                    <span asp-validation-for="PaymentDate" class="text-danger d-block mt-1"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="PaymentMethod" class="form-label"></label>
+                    <select asp-for="PaymentMethod" class="form-select"
+                            asp-items="@(new SelectList(Model.PaymentOptions))">
+                        <option value="">-- Select Method --</option>
+                    </select>
+                    <span asp-validation-for="PaymentMethod" class="text-danger d-block mt-1"></span>
+                </div>
+
+                <div class="col-md-12">
+                    <label asp-for="Notes" class="form-label"></label>
+                    <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Add any notes or remarks here..."></textarea>
+                    <span asp-validation-for="Notes" class="text-danger d-block mt-1"></span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Breakdown Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="card-title mb-0">Breakdown of Amount Paid</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="PrincipalPaid" class="form-label"></label>
+                    <input asp-for="PrincipalPaid" class="form-control" />
+                    <small class="form-text text-muted">Portion applied to principal</small>
+                    <span asp-validation-for="PrincipalPaid" class="text-danger d-block mt-1"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="InterestPaid" class="form-label"></label>
+                    <input asp-for="InterestPaid" class="form-control" />
+                    <small class="form-text text-muted">Portion applied to interest</small>
+                    <span asp-validation-for="InterestPaid" class="text-danger d-block mt-1"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="FeePaid" class="form-label"></label>
+                    <input asp-for="FeePaid" class="form-control" />
+                    <small class="form-text text-muted">Portion applied to fees</small>
+                    <span asp-validation-for="FeePaid" class="text-danger d-block mt-1"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="PenaltyPaid" class="form-label"></label>
+                    <input asp-for="PenaltyPaid" class="form-control" />
+                    <small class="form-text text-muted">Portion applied to penalty</small>
+                    <span asp-validation-for="PenaltyPaid" class="text-danger d-block mt-1"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-grid gap-2 d-md-flex justify-content-between mt-4 mb-4">
+        <a asp-controller="LoanApplications" asp-action="Detail" asp-route-id="@Model.LoanApplicationId"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Loan Application
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-currency-dollar me-2"></i>Save Repayment
+        </button>
+    </div>
+</form>
+</div>

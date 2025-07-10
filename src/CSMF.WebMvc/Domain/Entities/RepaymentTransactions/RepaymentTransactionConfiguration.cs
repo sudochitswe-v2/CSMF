@@ -15,7 +15,6 @@ public class RepaymentTransactionConfiguration : IEntityTypeConfiguration<Repaym
         builder.Property(e => e.PenaltyPaid).HasConversion<decimal>().HasPrecision(18, 2);
         builder.Property(e => e.PaymentDate).HasColumnType("date");
         builder.Property(e => e.PaymentMethod).IsRequired().HasMaxLength(50);
-        builder.Property(e => e.Status).IsRequired().HasMaxLength(50);
         builder.Property(e => e.Notes).HasColumnType("text");
 
         builder.HasOne(d => d.LoanApplication)

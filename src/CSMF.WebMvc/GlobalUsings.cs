@@ -6,6 +6,9 @@ global using CSMF.WebMvc.Models.Grantors;
 global using CSMF.WebMvc.Models.Loans;
 global using CSMF.WebMvc.Models.LoanFees;
 global using CSMF.WebMvc.Models.LoanApplications;
+global using CSMF.WebMvc.Models.PenaltyTransactions;
+global using CSMF.WebMvc.Models.RepaymentSchedules;
+global using CSMF.WebMvc.Models.RepaymentTransactions;
 global using CSMF.WebMvc.Data;
 global using CSMF.WebMvc.Domain.Abstractions;
 

@@ -1,15 +1,15 @@
 ﻿using CSMF.WebMvc.Data;
 using CSMF.WebMvc.Domain.Entities.LoanApplications;
+using CSMF.WebMvc.Models.LoanApplicationFees;
+using CSMF.WebMvc.Services.RepaymentSchedules;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MySql.EntityFrameworkCore.Extensions;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CSMF.WebMvc.Controllers
 {
-    public class LoanApplicationsController(ApplicationDbContext dbContext) : Controller
+    public class LoanApplicationsController(IRepaymentScheduleService scheduleSvc, ApplicationDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Index(string search, int page = 1, int size = 10)
         {
@@ -66,15 +66,49 @@ namespace CSMF.WebMvc.Controllers
         public IActionResult Create(LoanApplicationCreateViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                model.LoanProducts = GetLoans();
                 return View(model);
+            }
 
+            var loan = dbContext.LoanProducts
+                   .AsNoTracking()
+                   .FirstOrDefault(i => i.Id == model.LoanProductId);
+            if (loan is null)
+            {
+                ModelState.AddModelError("LoanProductId", "Loan Product is not found");
+                model.LoanProducts = GetLoans();
+                return View(model);
+            }
+            if (!(loan.MinPrincipalAmount < model.PrincipalAmount) && !(loan.MaxPrincipalAmount < model.PrincipalAmount))
+            {
+                ModelState.AddModelError("PrincipalAmount", $"Principal Amount must be between {loan.MinPrincipalAmount} and {loan.MaxPrincipalAmount}");
+                model.LoanProducts = GetLoans();
+                return View(model);
+            }
 
             var application = model.Adapt<LoanApplication>();
             application.Create(User.Identity.Name);
+
+            using var transaction = dbContext.Database.BeginTransaction();
+
             dbContext.LoanApplications.Add(application);
-            dbContext.SaveChanges();
+            dbContext.SaveChanges(); // Now application.Id is generated
+
+            var schedules = scheduleSvc.GenerateSchedules(application);
+            dbContext.RepaymentSchedules.AddRange(schedules);
+
+            dbContext.SaveChanges(); // Save everything in one transaction
+
+            transaction.Commit(); // All persisted together
 
             return RedirectToAction(nameof(Index));
+        }
+        private ICollection<LoanReadViewModel> GetLoans()
+        {
+            return dbContext.LoanProducts
+                .ProjectToType<LoanReadViewModel>()
+                .ToList();
         }
 
 
@@ -100,6 +134,60 @@ namespace CSMF.WebMvc.Controllers
 
             return View(pageResultViewModel);
 
+        }
+        [HttpGet]
+        public async Task<IActionResult> Detail(int id)
+        {
+            var loanApp = await dbContext.LoanApplications
+                .AsNoTracking()
+                .Include(l => l.Customer)
+                .Include(l => l.LoanProduct)
+                .Include(l => l.LoanFees)
+                .Include(l => l.RepaymentSchedules)
+                .Include(l => l.PenaltyTransactions)
+                .Include(l => l.RepaymentTransactions)
+                .Select(l => new LoanApplicationDeatilViewModel
+                {
+                    Id = l.Id,
+                    Status = l.Status,
+                    PrincipalAmount = l.PrincipalAmount,
+                    ReleaseDate = l.ReleaseDate,
+                    DurationMonths = l.Duration,
+                    DurationPeriod = l.DurationPeriod,
+                    InterestMethod = l.InterestMethod,
+                    InterestRate = l.InterestRate,
+                    InterestCycle = l.InterestCycle,
+                    RepaymentDay = l.RepaymentDay,
+                    RepaymentCycle = l.RepaymentCycle,
+                    CreatedOn = l.CreatedOn,
+
+                    Customer = l.Customer.Adapt<CustomerReadViewModel>(),
+                    LoanProduct = l.LoanProduct.Adapt<LoanReadViewModel>(),
+
+                    LoanFees = l.LoanFees.Adapt<List<LoanApplicationFeeReadViewModel>>(),
+                    PenaltyTransactions = l.PenaltyTransactions.Adapt<List<PenaltyTransactionReadViewModel>>(),
+                    RepaymentSchedules = l.RepaymentSchedules.Adapt<List<RepaymentScheduleReadViewModel>>(),
+                    RepaymentTransactions = l.RepaymentTransactions.Adapt<List<RepaymentTransactionReadViewModel>>()
+                })
+                .FirstOrDefaultAsync(l => l.Id == id);
+
+            if (loanApp == null)
+            {
+                return NotFound();
+            }
+
+            return View(loanApp);
+        }
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var loan = dbContext.LoanApplications
+                .FirstOrDefault(l => l.Id == id);
+            if (loan is null) return NotFound();
+
+            dbContext.LoanApplications.Remove(loan);
+            dbContext.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

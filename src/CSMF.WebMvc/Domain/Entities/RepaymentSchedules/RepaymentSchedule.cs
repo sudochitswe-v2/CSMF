@@ -17,8 +17,6 @@ namespace CSMF.WebMvc.Domain.Entities.RepaymentSchedules
         public decimal TotalAmount { get; set; }
         public decimal OutstandingPrincipal { get; set; }
         public string Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-
         // Navigation Properties
         public virtual LoanApplication LoanApplication { get; set; }
         public virtual ICollection<RepaymentTransaction> RepaymentTransactions { get; set; } = new List<RepaymentTransaction>();

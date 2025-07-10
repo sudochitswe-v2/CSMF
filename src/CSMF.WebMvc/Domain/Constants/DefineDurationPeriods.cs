@@ -2,9 +2,10 @@
 {
     public enum DefineDurationPeriods
     {
-       Days,
-       Months,
-       Weeks,
-       Years
+        Days,
+        Months,
+        Weeks,
+        Years
     }
+
 }

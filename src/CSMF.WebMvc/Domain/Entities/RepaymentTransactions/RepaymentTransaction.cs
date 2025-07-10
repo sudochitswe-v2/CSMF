@@ -1,5 +1,4 @@
-﻿using CSMF.WebMvc.Domain.Abstractions;
-using CSMF.WebMvc.Domain.Entities.LoanApplications;
+﻿using CSMF.WebMvc.Domain.Entities.LoanApplications;
 using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
 
 namespace CSMF.WebMvc.Domain.Entities.RepaymentTransactions
@@ -15,7 +14,6 @@ namespace CSMF.WebMvc.Domain.Entities.RepaymentTransactions
         public decimal PenaltyPaid { get; set; }
         public DateTime PaymentDate { get; set; }
         public string PaymentMethod { get; set; }
-        public string Status { get; set; }
         public string Notes { get; set; }
 
         // Navigation Properties

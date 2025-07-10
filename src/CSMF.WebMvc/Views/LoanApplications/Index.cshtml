@@ -81,7 +81,7 @@
                                 <!-- Delete Form -->
                                 <form id="delete-form-@loan.Id" asp-action="Delete" asp-route-id="@loan.Id" method="post" class="d-inline">
                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                            onclick="confirmDelete('@loan.Id')">
+                                            onclick="confirmDelete('@loan.Id','Loan #@loan.Id')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
@@ -153,11 +153,11 @@
 
 @section Scripts {
     <script>
-        function confirmDelete(id) {
-            if (confirm('Are you sure you want to delete this application?')) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        }
+        //function confirmDelete(id) {
+        //    if (confirm('Are you sure you want to delete this application?')) {
+        //        document.getElementById('delete-form-' + id).submit();
+        //    }
+        //}
 
         function changePageSize(size) {
             const urlParams = new URLSearchParams(window.location.search);

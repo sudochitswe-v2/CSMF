@@ -1,0 +1,392 @@
+﻿@model LoanApplicationDeatilViewModel
+@{
+    ViewData["Title"] = $"Loan Application #{Model.Id}";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4">Loan Application Details</h3>
+
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs" id="loanAppTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail"
+                    type="button" role="tab" aria-controls="detail" aria-selected="true">
+                <i class="bi bi-card-text me-1"></i>Detail
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="fees-tab" data-bs-toggle="tab" data-bs-target="#fees"
+                    type="button" role="tab" aria-controls="fees" aria-selected="false">
+                <i class="bi bi-currency-dollar me-1"></i>Fees & Penalties
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="schedules-tab" data-bs-toggle="tab" data-bs-target="#schedules"
+                    type="button" role="tab" aria-controls="schedules" aria-selected="false">
+                <i class="bi bi-calendar-check me-1"></i>Schedules
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="repayments-tab" data-bs-toggle="tab" data-bs-target="#repayments"
+                    type="button" role="tab" aria-controls="repayments" aria-selected="false">
+                <i class="bi bi-wallet me-1"></i>Repayments
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer"
+                    type="button" role="tab" aria-controls="customer" aria-selected="true">
+                <i class="bi bi-person me-2"></i>Customer Info
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content shadow-sm p-4 bg-white border rounded-bottom" id="loanAppTabsContent">
+
+        <!-- Tab 1: Basic Info -->
+        <div class="tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    @*<dl class="row">
+            <dt class="col-md-4">Customer</dt>
+            <dd class="col-md-8">@Model.Customer.FullName (@Model.Customer.IdentificationNumber)</dd>
+
+            <dt class="col-md-4">Loan Product</dt>
+            <dd class="col-md-8">@Model.LoanProduct.ProductTitle</dd>
+
+            <dt class="col-md-4">Principal Amount</dt>
+            <dd class="col-md-8">@Model.PrincipalAmount.ToString("C")</dd>
+
+            <dt class="col-md-4">Release Date</dt>
+            <dd class="col-md-8">@Model.ReleaseDate.ToShortDateString()</dd>
+
+            <dt class="col-md-4">Duration</dt>
+            <dd class="col-md-8">@Model.DurationMonths @Model.DurationPeriod</dd>
+
+            <dt class="col-md-4">Interest Method</dt>
+            <dd class="col-md-8">@Model.InterestMethod</dd>
+
+            <dt class="col-md-4">Interest Rate</dt>
+            <dd class="col-md-8">@Model.InterestRate%</dd>
+
+            <dt class="col-md-4">Status</dt>
+            <dd class="col-md-8">
+                @if (Model.Status == "Pending")
+                {
+                    <span class="badge bg-warning">@Model.Status</span>
+                }
+                else if (Model.Status == "Approved")
+                {
+                    <span class="badge bg-success">@Model.Status</span>
+                }
+                else if (Model.Status == "Rejected")
+                {
+                    <span class="badge bg-danger">@Model.Status</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">@Model.Status</span>
+                }
+            </dd>
+        </dl>*@
+                    <div class="container">
+                        <!-- Processing Indicator -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="badge bg-warning text-dark me-2">@Model.Status</span>
+                            <a href="#" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                        </div>
+
+                        <!-- Two-Column Layout -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h5 class="card-title mb-3">Loan Information</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Loan Number</dt>
+                                    <dd class="col-sm-7">@Model.Id</dd>
+
+                                    <dt class="col-sm-5">Duration</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-clock me-1"></i>@Model.DurationPeriod</dd>
+
+                                    <dt class="col-sm-5">Product</dt>
+                                    <dd class="col-sm-7">@Model.LoanProduct.ProductTitle</dd>
+
+                                    <dt class="col-sm-5">Principal Amount</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.PrincipalAmount.ToString("N0")</dd>
+
+                                    <dt class="col-sm-5">Interest Rate</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-percent me-1"></i>@Model.InterestRate% @Model.InterestCycle</dd>
+
+                                    <dt class="col-sm-5">Interest Method</dt>
+                                    <dd class="col-sm-7">@Model.InterestMethod</dd>
+                                </dl>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h5 class="card-title mb-3">Important Dates</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Creation Date</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-calendar-check me-1"></i>@Model.CreatedOn.ToShortDateString()</dd>
+
+                                    <dt class="col-sm-5">Release Date</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-calendar-check me-1"></i>@Model.ReleaseDate.ToShortDateString()</dd>
+                                </dl>
+
+                                <h5 class="card-title mb-3">Repayment Details</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-5">Repayment Cycle</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-arrow-left-right me-1"></i>@Model.RepaymentCycle</dd>
+
+                                    @*<dt class="col-sm-5">Periodic Repayment</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.PrincipalAmount.ToString("N0")</dd>
+
+                                    <dt class="col-sm-5">Total Amount Due</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.PrincipalAmount.ToString("N0") </dd>*@
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Fees & Penalties -->
+        <div class="tab-pane fade" id="fees" role="tabpanel" aria-labelledby="fees-tab">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Fees</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.LoanFees?.Any() == true)
+                    {
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Percentage</th>
+                                    <th>Fixed Amount</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var fee in Model.LoanFees)
+                                {
+                                    <tr>
+                                        <td>@fee.FeeName</td>
+                                        <td>@fee.FeeType</td>
+                                        <td>@(fee.FeePercentage.HasValue ? $"{fee.FeePercentage}%" : "-")</td>
+                                        <td>@(fee.FeeAmount.HasValue ? fee.FeeAmount.Value.ToString("C") : "-")</td>
+                                        <td>@fee.CalculatedAmount.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No fees applied.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">Penalty Transactions</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PenaltyTransactions?.Any() == true)
+                    {
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var penalty in Model.PenaltyTransactions)
+                                {
+                                    <tr>
+                                        <td>@penalty.PenaltyDate.ToShortDateString()</td>
+                                        <td>@penalty.PenaltyType</td>
+                                        <td>@penalty.PenaltyAmount.ToString("C")</td>
+                                        <td>@penalty.Description</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No penalties applied yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Repayment Schedules -->
+        <div class="tab-pane fade" id="schedules" role="tabpanel" aria-labelledby="schedules-tab">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Repayment Schedule</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RepaymentSchedules?.Any() == true)
+                    {
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Due Date</th>
+                                    <th>Principal</th>
+                                    <th>Interest</th>
+                                    <th>Fees</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var schedule in Model.RepaymentSchedules.OrderBy(s => s.InstallmentNumber))
+                                {
+                                    <tr>
+                                        <td>@schedule.InstallmentNumber</td>
+                                        <td>@schedule.DueDate.ToShortDateString()</td>
+                                        <td>@schedule.PrincipalAmount.ToString("C")</td>
+                                        <td>@schedule.InterestAmount.ToString("C")</td>
+                                        <td>@schedule.FeeAmount.ToString("C")</td>
+                                        <td>@schedule.TotalAmount.ToString("C")</td>
+                                        <td>
+                                            @if (schedule.Status == "Paid")
+                                            {
+                                                <span class="badge bg-success">@schedule.Status</span>
+                                            }
+                                            else if (schedule.Status == "Overdue")
+                                            {
+                                                <span class="badge bg-danger">@schedule.Status</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">@schedule.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No repayment schedules found.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Repayments -->
+        <div class="tab-pane fade" id="repayments" role="tabpanel" aria-labelledby="repayments-tab">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Repayment Transactions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-end align-items-center mb-4">
+                        @*<span class="badge bg-warning text-dark me-2">@Model.Status</span>*@
+                        <a asp-controller="Repayments" asp-action="Create" asp-route-loanApplicationId="@Model.Id"class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-cash-stack"></i> Repayment
+                        </a>
+                    </div>
+                    @if (Model.RepaymentTransactions?.Any() == true)
+                    {
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Paid</th>
+                                    <th>Breakdown</th>
+                                    <th>Payment Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var transaction in Model.RepaymentTransactions.OrderByDescending(t => t.PaymentDate))
+                                {
+                                    <tr>
+                                        <td>@transaction.PaymentDate.ToShortDateString()</td>
+                                        <td>@transaction.AmountPaid.ToString("C")</td>
+                                        <td>
+                                            <small class="d-block text-muted">P: @transaction.PrincipalPaid.ToString("C")</small>
+                                            <small class="d-block text-muted">I: @transaction.InterestPaid.ToString("C")</small>
+                                            <small class="d-block text-muted">F: @transaction.FeePaid.ToString("C")</small>
+                                            <small class="d-block text-muted">Penalty: @transaction.PenaltyPaid.ToString("C")</small>
+                                        </td>
+                                        <td>@transaction.PaymentMethod</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No repayments recorded yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 1: Customer Info -->
+        <div class="tab-pane fade" id="customer" role="tabpanel" aria-labelledby="customer-tab">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Customer Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Full Name</dt>
+                        <dd class="col-sm-8">@Model.Customer.FirstName @Model.Customer.LastName</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">@Model.Customer.Email</dd>
+
+                        <dt class="col-sm-4">Phone</dt>
+                        <dd class="col-sm-8">@Model.Customer.Phone</dd>
+
+                        <dt class="col-sm-4">Address</dt>
+                        <dd class="col-sm-8">@Model.Customer.Address</dd>
+
+                        <dt class="col-sm-4">Identification Number</dt>
+                        <dd class="col-sm-8">@Model.Customer.IdentificationNumber</dd>
+
+                        @*<dt class="col-sm-4">Branch</dt>
+                        <dd class="col-sm-8">@Model.Customer.Branch?.Name</dd>*@
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Tooltip support
+        document.addEventListener("DOMContentLoaded", function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipEl) {
+                return new bootstrap.Tooltip(tooltipEl);
+            });
+        });
+    </script>
+}

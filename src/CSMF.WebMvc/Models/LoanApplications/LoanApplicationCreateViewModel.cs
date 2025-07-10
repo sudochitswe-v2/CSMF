@@ -1,5 +1,4 @@
-﻿using CSMF.WebMvc.Domain.Constants;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CSMF.WebMvc.Models.LoanApplications
 {

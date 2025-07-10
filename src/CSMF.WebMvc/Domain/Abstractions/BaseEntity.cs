@@ -26,9 +26,10 @@
             ModifiedOn = DateTime.Now;
         }
 
-        public T Create(string createdBy)
+        public T Create(string? createdBy)
         {
-            CreatedBy = createdBy;
+            CreatedBy = createdBy ??
+                throw new ArgumentNullException(nameof(createdBy), "CreatedBy cannot be null");
             CreatedOn = DateTime.Now;
             return (T)this;
         }
