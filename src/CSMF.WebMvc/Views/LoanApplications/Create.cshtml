@@ -173,6 +173,23 @@
             </div>
         </div>
 
+        <!-- Hidden field for Selected Fee IDs -->
+        <input type="hidden" asp-for="SelectedFeeIds" id="SelectedFeeIds" />
+
+        <!-- Selected Fees Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between">
+                <h5 class="card-title mb-0">Selected Fees</h5>
+                <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#feeModal">
+                    <i class="bi bi-plus-circle"></i> Add Fees
+                </button>
+            </div>
+            <div class="card-body">
+                <ul id="SelectedFeeList" class="list-group small"></ul>
+            </div>
+        </div>
+
+
         <!-- Action Buttons -->
         <div class="d-grid gap-2 d-md-flex justify-content-between mt-4 mb-4">
             <a asp-controller="LoanApplications" asp-action="Index"
@@ -185,11 +202,124 @@
         </div>
     </form>
 </div>
+<!-- Fee Selection Modal -->
+<div class="modal fade" id="feeModal" tabindex="-1" aria-labelledby="feeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="feeModalLabel">Select Loan Fees</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="text" id="feeSearchInput" class="form-control mb-3" placeholder="Search fees..." />
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Fee Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feeTableBody"></tbody>
+                </table>
+                <nav>
+                    <ul class="pagination justify-content-center" id="feePagination"></ul>
+                </nav>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section Scripts {
 
     <script src="~/js/LoanApplicationCreate.js"></script>
+    <script>
+        let selectedFees = {};
 
+        function loadFees(page = 1, search = '') {
+            $.get(`/api/v1/fees?page=${page}&size=10&search=${encodeURIComponent(search)}`, function (data) {
+                let body = $('#feeTableBody');
+                body.empty();
+
+                $.each(data.items, function (i, fee) {
+                    const checked = selectedFees[fee.id] ? 'checked' : '';
+                    const row = `<tr>
+                        <td><input type="checkbox" class="fee-checkbox" data-id="${fee.id}" data-name="${fee.name}" ${checked}></td>
+                        <td>${fee.name}</td>
+                    </tr>`;
+                    body.append(row);
+                });
+
+                // Render pagination
+                let pag = $('#feePagination');
+                pag.empty();
+                for (let i = 1; i <= data.totalPages; i++) {
+                    let li = $(`<li class="page-item ${i === data.pageNumber ? 'active' : ''}">
+                        <a class="page-link" href="#">${i}</a>
+                    </li>`);
+                    li.find('a').click(function (e) {
+                        e.preventDefault();
+                        loadFees(i, $('#feeSearchInput').val());
+                    });
+                    pag.append(li);
+                }
+            });
+        }
+
+        function updateSelectedFeeDisplay() {
+            let list = $('#SelectedFeeList');
+            list.empty();
+
+            const ids = Object.keys(selectedFees);
+            $('#SelectedFeeIds').val(ids.join(';'));
+
+            $.each(selectedFees, function (id, name) {
+                list.append(`
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${name}
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-fee" data-id="${id}">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </li>
+                `);
+            });
+        }
+
+        $(document).ready(function () {
+            // Initial load
+            loadFees();
+
+            // Search as you type
+            $('#feeSearchInput').on('input', function () {
+                loadFees(1, $(this).val());
+            });
+
+            // Checkbox handling
+            $('#feeTableBody').on('change', '.fee-checkbox', function () {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                if (this.checked) {
+                    selectedFees[id] = name;
+                } else {
+                    delete selectedFees[id];
+                }
+                updateSelectedFeeDisplay();
+            });
+
+            // Remove button
+            $('#SelectedFeeList').on('click', '.remove-fee', function () {
+                const id = $(this).data('id');
+                delete selectedFees[id];
+                updateSelectedFeeDisplay();
+                loadFees(1, $('#feeSearchInput').val());
+            });
+        });
+    </script>
 }
 

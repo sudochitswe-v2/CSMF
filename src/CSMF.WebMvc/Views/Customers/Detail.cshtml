@@ -198,6 +198,7 @@
                                     <th>Amount</th>
                                     <th>Status</th>
                                     <th>Applied On</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -205,9 +206,14 @@
                                 {
                                     <tr>
                                         <td>@loan.Id</td>
-                                        <td>@loan.PrincipalAmount.ToString("C")</td>
+                                        <td>@loan.PrincipalAmount.ToString("N0")</td>
                                         <td>@loan.Status</td>
                                         <td>@loan.CreatedOn.ToShortDateString()</td>
+                                        <td>
+                                            <a asp-action="LoanStatement" asp-route-customerId="@Model.Id" asp-route-loanId="@loan.Id" class="btn btn-sm btn-outline-info">
+                                                <i class="bi bi-file-earmark-spreadsheet"></i> Statement
+                                            </a>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>

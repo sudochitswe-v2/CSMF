@@ -2,8 +2,10 @@ using Carter;
 using CSMF.WebMvc.Data.Seeders;
 using CSMF.WebMvc.Domain.Entities.Users;
 using CSMF.WebMvc.Services;
+using CSMF.WebMvc.Services.LoanApplications;
 using CSMF.WebMvc.Services.RepaymentSchedules;
 using CSMF.WebMvc.Services.RepaymentTransactions;
+using CSMF.WebMvc.Services.Reports;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -50,9 +52,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCarter();
 
 builder.Services.AddScoped<IHttpContextExtractorService, HttpContextExtractorService>();
+builder.Services.AddScoped<ILoanFeeService, LoanFeeService>();
 builder.Services.AddScoped<IRepaymentScheduleService, RepaymentScheduleService>();
 builder.Services.AddScoped<IScheduleValidatorService, ScheduleValidatorService>();
 builder.Services.AddScoped<IRepaymentTransactionService, RepaymentTransactionService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IExporterService, ExporterService>();
 
 var app = builder.Build();
 

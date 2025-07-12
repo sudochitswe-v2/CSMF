@@ -115,21 +115,24 @@ public class NavGroupExtentions
             Title = "Loan Applications",
             Controller = "LoanApplications",
             Icon = "bi-folder2-open",
-            Children = new List<NavigationItem>
-            {
-                new NavigationItem
-                    {
+            Children =
+            [
+                new() {
                         Title = "Applications",
                         Action = "Index",
                         Icon = "bi-folder2-open"
                     },
-                new NavigationItem
-                    {
+                    new() {
+                        Title = "Pending Applications",
+                        Action = "Requests",
+                        Icon = "bi-folder2-open"
+                    },
+                new() {
                         Title = "New Application",
                         Action = "Create",
                         Icon = "bi-journal-plus"
                     }
-            }
+            ]
 
         };
     }
@@ -142,36 +145,31 @@ public class NavGroupExtentions
             Controller = "Reports",
             Children = new List<NavigationItem>
                 {
+                    //new NavigationItem {
+                    //    Title = "Customer Reports",
+                    //    Action = "Customers",
+                    //    Icon = "bi-person-lines-fill"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Loan",
+                    //    Action = "Loans",
+                    //    Icon = "bi-clipboard-data"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Repayment",
+                    //    Action = "Repayments",
+                    //    Icon = "bi-journal-text"
+                    //},
                     new NavigationItem {
-                        Title = "Customer Reports",
-                        Action = "Customers",
-                        Icon = "bi-person-lines-fill"
-                    },
-                    new NavigationItem {
-                        Title = "Loan Reports",
-                        Action = "Loans",
-                        Icon = "bi-clipboard-data"
-                    },
-                    new NavigationItem {
-                        Title = "Repayment Reports",
-                        Action = "Repayments",
-                        Icon = "bi-journal-text"
-                    },
-                    new NavigationItem {
-                        Title = "Delinquency Reports",
+                        Title = "Delinquency",
                         Action = "Delinquency",
                         Icon = "bi-exclamation-circle"
                     },
-                    new NavigationItem {
-                        Title = "Financial Statements",
-                        Action = "Financials",
-                        Icon = "bi-file-earmark-bar-graph"
-                    },
-                    new NavigationItem {
-                        Title = "Custom Reports",
-                        Action = "Custom",
-                        Icon = "bi-file-earmark-spreadsheet"
-                    }
+                    //new NavigationItem {
+                    //    Title = "Financial Statements",
+                    //    Action = "Financials",
+                    //    Icon = "bi-file-earmark-bar-graph"
+                    //}
                 }
         };
     }
@@ -189,21 +187,21 @@ public class NavGroupExtentions
                         Action = "Index",
                         Icon = "bi-person-check"
                     },
-                    new NavigationItem {
-                        Title = "Roles & Permissions",
-                        Action = "Roles",
-                        Icon = "bi-shield-lock"
-                    },
-                    new NavigationItem {
-                        Title = "Audit Logs",
-                        Action = "AuditLogs",
-                        Icon = "bi-clipboard-check"
-                    },
-                    new NavigationItem {
-                        Title = "Login History",
-                        Action = "LoginHistory",
-                        Icon = "bi-clock-history"
-                    }
+                    //new NavigationItem {
+                    //    Title = "Roles & Permissions",
+                    //    Action = "Roles",
+                    //    Icon = "bi-shield-lock"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Audit Logs",
+                    //    Action = "AuditLogs",
+                    //    Icon = "bi-clipboard-check"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Login History",
+                    //    Action = "LoginHistory",
+                    //    Icon = "bi-clock-history"
+                    //}
                 }
         };
     }

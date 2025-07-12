@@ -1,0 +1,93 @@
+﻿@using CSMF.WebMvc.Extensions
+@model ICollection<LoanApplicationReadViewModel>
+@{
+    ViewData["Title"] = "Pending Approval Loan Application";
+}
+@if (Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Loan No.</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Principal</th>
+                    <th>Release Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var loan in Model)
+                {
+                    <tr>
+                        <td>@loan.Id</td>
+                        <td>@loan.Customer.FullName</td>
+                        <td>
+                            @{
+                                string bg = loan.Status.ToLoanStatusBootstrapClass();
+                            }
+                            <span class="badge @bg">@loan.Status</span>
+                        </td>
+                        <td>@loan.PrincipalAmount.ToString("N0")</td>
+                        <td>@loan.ReleaseDate.ToString("dd/MMMM/yyyy")</td>
+
+                        <td class="text-end">
+
+                            @{
+                                var approve = nameof(DefinedLoanApplicationStatus.Active);
+                                var denied = nameof(DefinedLoanApplicationStatus.Denied);
+                            }
+
+                            <form id="Approve-form-@loan.Id" asp-action="UpdateStatus" method="post" class="d-inline">
+                                <input type="hidden" name="Id" value="@loan.Id" />
+                                <input type="hidden" name="Status" value="@approve" />
+                                <button type="button" class="btn btn-sm btn-outline-success"
+                                        onclick="confirmUpdateStatus('@loan.Id','Approve')">
+                                    <i class="bi bi-check-square"></i>
+                                </button>
+                            </form>
+
+                            <form id="Reject-form-@loan.Id" asp-action="UpdateStatus" method="post" class="d-inline">
+                                <input type="hidden" name="Id" value="@loan.Id" />
+                                <input type="hidden" name="Status" value="@denied" />
+                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                        onclick="confirmUpdateStatus('@loan.Id','Reject')">
+                                    <i class="bi bi-x-square-fill"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+}
+else
+{
+    <div class="alert alert-info text-center mt-3">No pending approval applications found.</div>
+}
+
+<script>
+
+    function confirmUpdateStatus(id, status) {
+        Notiflix.Confirm.init({
+            titleColor: "#dc3545",
+            okButtonBackground: '#dc3545',  // Bootstrap Red (Danger)
+            cancelButtonBackground: '#6c757d', // Optional: Bootstrap Secondary
+        });
+        Notiflix.Confirm.show(
+            'Confirm',
+            `Are you sure you want to update this loan no.#${id} to ${status}?`,
+            `Yes, ${status}`,
+            'Cancel',
+            function okCb() {
+                document.getElementById(`${status}-form-` + id).submit();
+            },
+            function cancelCb() {
+                // Do nothing
+            }
+        );
+    }
+</script>

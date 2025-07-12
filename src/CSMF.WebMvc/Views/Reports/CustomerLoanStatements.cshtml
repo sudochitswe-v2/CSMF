@@ -1,0 +1,117 @@
+﻿@model CustomerLoanStatementViewModel
+@{
+    ViewBag.Title = $"Loan Statement for {Model.Customer.FullName}";
+}
+
+<div class="d-flex justify-content-start align-items-center mb-2">
+    <a asp-controller="Reports" asp-action="ExportStatementsPdf" asp-route-customerId="@Model.Customer.Id" class="btn btn-danger me-2">
+        <i class="bi bi-file-earmark-pdf"></i> Export All to PDF
+    </a>
+    <a asp-controller="Reports" asp-action="ExportStatementsExcel" asp-route-customerId="@Model.Customer.Id" class="btn btn-success">
+        <i class="bi bi-file-earmark-excel"></i> Export All to Excel
+    </a>
+</div>
+@foreach (var loan in Model.LoanStatements)
+{
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                Loan ID: @loan.LoanId | Product: @loan.ProductName
+            </div>
+            <div>
+                <a asp-controller="Reports" asp-action="ExportStatementsPdf" asp-route-customerId="@Model.Customer.Id" asp-route-loanId="@loan.LoanId" class="btn btn-danger me-2">
+                    <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                </a>
+                <a asp-controller="Reports" asp-action="ExportStatementsExcel" asp-route-customerId="@Model.Customer.Id" asp-route-loanId="@loan.LoanId" class="btn btn-success">
+                    <i class="bi bi-file-earmark-excel"></i> Export Excel
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <h5>Loan Summary</h5>
+            <ul>
+                <li>Principal: @loan.Principal.ToString("N0")</li>
+                <li>Interest Rate: @loan.InterestRate %</li>
+                <li>Release Date: @loan.ReleaseDate.ToShortDateString()</li>
+                <li>Total Interest: @loan.TotalInterest.ToString("N0")</li>
+                <li>Total Repayment: @loan.TotalRepayment.ToString("N0")</li>
+                <li>Current Balance: <strong>@loan.CurrentBalance.ToString("N0")</strong></li>
+            </ul>
+
+            <h5>Schedule</h5>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Inst #</th>
+                        <th>Due Date</th>
+                        <th>Principal</th>
+                        <th>Interest</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in loan.Schedule)
+                    {
+                        <tr>
+                            <td>@s.InstallmentNumber</td>
+                            <td>@s.DueDate.ToShortDateString()</td>
+                            <td>@s.PrincipalAmount.ToString("N0")</td>
+                            <td>@s.InterestAmount.ToString("N0")</td>
+                            <td>@s.TotalAmount.ToString("N0")</td>
+                            <td>@s.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h5>Payments History</h5>
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Principal</th>
+                        <th>Interest</th>
+                        <th>Fees</th>
+                        <th>Penalty</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in loan.Payments)
+                    {
+                        <tr>
+                            <td>@t.PaymentDate.ToShortDateString()</td>
+                            <td>@t.PrincipalPaid.ToString("N0")</td>
+                            <td>@t.InterestPaid.ToString("N0")</td>
+                            <td>@t.FeePaid.ToString("N0")</td>
+                            <td>@t.PenaltyPaid.ToString("N0")</td>
+                            <td>@t.AmountPaid.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h5>Loan Fees</h5>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Fee Name</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var f in loan.Fees)
+                    {
+                        <tr>
+                            <td>@f.FeeName</td>
+                            <td>@f.CalculatedAmount.ToString("N0")</td>
+                            <td>@f.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

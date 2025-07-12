@@ -1,4 +1,5 @@
 ﻿@model LoanApplicationDeatilViewModel
+@using CSMF.WebMvc.Extensions;
 @{
     ViewData["Title"] = $"Loan Application #{Model.Id}";
 }
@@ -57,52 +58,16 @@
                     <h5 class="card-title mb-0">Basic Information</h5>
                 </div>
                 <div class="card-body">
-                    @*<dl class="row">
-            <dt class="col-md-4">Customer</dt>
-            <dd class="col-md-8">@Model.Customer.FullName (@Model.Customer.IdentificationNumber)</dd>
-
-            <dt class="col-md-4">Loan Product</dt>
-            <dd class="col-md-8">@Model.LoanProduct.ProductTitle</dd>
-
-            <dt class="col-md-4">Principal Amount</dt>
-            <dd class="col-md-8">@Model.PrincipalAmount.ToString("C")</dd>
-
-            <dt class="col-md-4">Release Date</dt>
-            <dd class="col-md-8">@Model.ReleaseDate.ToShortDateString()</dd>
-
-            <dt class="col-md-4">Duration</dt>
-            <dd class="col-md-8">@Model.DurationMonths @Model.DurationPeriod</dd>
-
-            <dt class="col-md-4">Interest Method</dt>
-            <dd class="col-md-8">@Model.InterestMethod</dd>
-
-            <dt class="col-md-4">Interest Rate</dt>
-            <dd class="col-md-8">@Model.InterestRate%</dd>
-
-            <dt class="col-md-4">Status</dt>
-            <dd class="col-md-8">
-                @if (Model.Status == "Pending")
-                {
-                    <span class="badge bg-warning">@Model.Status</span>
-                }
-                else if (Model.Status == "Approved")
-                {
-                    <span class="badge bg-success">@Model.Status</span>
-                }
-                else if (Model.Status == "Rejected")
-                {
-                    <span class="badge bg-danger">@Model.Status</span>
-                }
-                else
-                {
-                    <span class="badge bg-secondary">@Model.Status</span>
-                }
-            </dd>
-        </dl>*@
                     <div class="container">
                         <!-- Processing Indicator -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <span class="badge bg-warning text-dark me-2">@Model.Status</span>
+
+                            @{
+                                var loanStatusBg = Model.Status.ToLoanStatusBootstrapClass();
+                            }
+
+
+                            <span class="badge @loanStatusBg text-dark me-2">@Model.Status</span>
                             <a href="#" class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
@@ -126,7 +91,7 @@
                                     <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.PrincipalAmount.ToString("N0")</dd>
 
                                     <dt class="col-sm-5">Interest Rate</dt>
-                                    <dd class="col-sm-7"><i class="bi bi-percent me-1"></i>@Model.InterestRate% @Model.InterestCycle</dd>
+                                    <dd class="col-sm-7"><i class="bi bi-percent me-1"></i>@Model.InterestRate @Model.InterestCycle</dd>
 
                                     <dt class="col-sm-5">Interest Method</dt>
                                     <dd class="col-sm-7">@Model.InterestMethod</dd>
@@ -148,11 +113,13 @@
                                     <dt class="col-sm-5">Repayment Cycle</dt>
                                     <dd class="col-sm-7"><i class="bi bi-arrow-left-right me-1"></i>@Model.RepaymentCycle</dd>
 
-                                    @*<dt class="col-sm-5">Periodic Repayment</dt>
-                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.PrincipalAmount.ToString("N0")</dd>
+                                    <dt class="col-sm-5">Periodic Repayment</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.PeriodicRepaymentAmount.ToString("N0")</dd>
 
                                     <dt class="col-sm-5">Total Amount Due</dt>
-                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.PrincipalAmount.ToString("N0") </dd>*@
+                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.TotalAmountDue.ToString("N0") </dd>
+                                    <dt class="col-sm-5">Total Amount Paid</dt>
+                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.TotalAmountPaid.ToString("N0") </dd>
                                 </dl>
                             </div>
                         </div>
@@ -175,9 +142,7 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Percentage</th>
-                                    <th>Fixed Amount</th>
+                                    <th>Status</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
@@ -186,10 +151,13 @@
                                 {
                                     <tr>
                                         <td>@fee.FeeName</td>
-                                        <td>@fee.FeeType</td>
-                                        <td>@(fee.FeePercentage.HasValue ? $"{fee.FeePercentage}%" : "-")</td>
-                                        <td>@(fee.FeeAmount.HasValue ? fee.FeeAmount.Value.ToString("C") : "-")</td>
-                                        <td>@fee.CalculatedAmount.ToString("C")</td>
+                                        <td>
+                                            @{
+                                                string bg = fee.Status.ToPaymentStatusBootstrapClass();
+                                            }
+                                            <span class="badge @bg">@fee.Status</span>
+                                        </td>
+                                        <td>@fee.CalculatedAmount.ToString("N0")</td>
                                     </tr>
                                 }
                             </tbody>
@@ -224,7 +192,7 @@
                                     <tr>
                                         <td>@penalty.PenaltyDate.ToShortDateString()</td>
                                         <td>@penalty.PenaltyType</td>
-                                        <td>@penalty.PenaltyAmount.ToString("C")</td>
+                                        <td>@penalty.PenaltyAmount.ToString("N0")</td>
                                         <td>@penalty.Description</td>
                                     </tr>
                                 }
@@ -266,23 +234,15 @@
                                     <tr>
                                         <td>@schedule.InstallmentNumber</td>
                                         <td>@schedule.DueDate.ToShortDateString()</td>
-                                        <td>@schedule.PrincipalAmount.ToString("C")</td>
-                                        <td>@schedule.InterestAmount.ToString("C")</td>
-                                        <td>@schedule.FeeAmount.ToString("C")</td>
-                                        <td>@schedule.TotalAmount.ToString("C")</td>
+                                        <td>@schedule.PrincipalAmount.ToString("N0")</td>
+                                        <td>@schedule.InterestAmount.ToString("N0")</td>
+                                        <td>@schedule.FeeAmount.ToString("N0")</td>
+                                        <td>@schedule.TotalAmount.ToString("N0")</td>
                                         <td>
-                                            @if (schedule.Status == "Paid")
-                                            {
-                                                <span class="badge bg-success">@schedule.Status</span>
+                                            @{
+                                                var schduleBadgeBg = schedule.Status.ToPaymentStatusBootstrapClass();
                                             }
-                                            else if (schedule.Status == "Overdue")
-                                            {
-                                                <span class="badge bg-danger">@schedule.Status</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-secondary">@schedule.Status</span>
-                                            }
+                                            <span class="badge @schduleBadgeBg">@schedule.Status</span>
                                         </td>
                                     </tr>
                                 }
@@ -304,12 +264,15 @@
                     <h5 class="card-title mb-0">Repayment Transactions</h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-end align-items-center mb-4">
-                        @*<span class="badge bg-warning text-dark me-2">@Model.Status</span>*@
-                        <a asp-controller="Repayments" asp-action="Create" asp-route-loanApplicationId="@Model.Id"class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-cash-stack"></i> Repayment
-                        </a>
-                    </div>
+                    @if (Model.Status.Equals(nameof(DefinedLoanApplicationStatus.Active)))
+                    {
+                        <div class="d-flex justify-content-end align-items-center mb-4">
+                            @*<span class="badge bg-warning text-dark me-2">@Model.Status</span>*@
+                            <a asp-controller="Repayments" asp-action="Create" asp-route-loanApplicationId="@Model.Id" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-cash-stack"></i> Repayment
+                            </a>
+                        </div>
+                    }
                     @if (Model.RepaymentTransactions?.Any() == true)
                     {
                         <table class="table table-hover">
@@ -326,12 +289,12 @@
                                 {
                                     <tr>
                                         <td>@transaction.PaymentDate.ToShortDateString()</td>
-                                        <td>@transaction.AmountPaid.ToString("C")</td>
+                                        <td>@transaction.AmountPaid.ToString("N0")</td>
                                         <td>
-                                            <small class="d-block text-muted">P: @transaction.PrincipalPaid.ToString("C")</small>
-                                            <small class="d-block text-muted">I: @transaction.InterestPaid.ToString("C")</small>
-                                            <small class="d-block text-muted">F: @transaction.FeePaid.ToString("C")</small>
-                                            <small class="d-block text-muted">Penalty: @transaction.PenaltyPaid.ToString("C")</small>
+                                            <small class="d-block text-muted">P: @transaction.PrincipalPaid.ToString("N0")</small>
+                                            <small class="d-block text-muted">I: @transaction.InterestPaid.ToString("N0")</small>
+                                            <small class="d-block text-muted">F: @transaction.FeePaid.ToString("N0")</small>
+                                            <small class="d-block text-muted">Penalty: @transaction.PenaltyPaid.ToString("N0")</small>
                                         </td>
                                         <td>@transaction.PaymentMethod</td>
                                     </tr>
@@ -371,7 +334,7 @@
                         <dd class="col-sm-8">@Model.Customer.IdentificationNumber</dd>
 
                         @*<dt class="col-sm-4">Branch</dt>
-                        <dd class="col-sm-8">@Model.Customer.Branch?.Name</dd>*@
+                            <dd class="col-sm-8">@Model.Customer.Branch?.Name</dd>*@
                     </dl>
                 </div>
             </div>

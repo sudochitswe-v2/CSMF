@@ -21,10 +21,17 @@ public class LoanApplicationDeatilViewModel
     public int RepaymentDay { get; set; }
     public DateTime CreatedOn { get; set; }
 
+    private int Length => RepaymentSchedules.Count;
+    public decimal PeriodicRepaymentAmount => Length == 0 ? 0 : RepaymentSchedules[Length - 1].TotalAmount;
+    public decimal TotalAmountDue => RepaymentSchedules
+        .Where(s => !s.Status.Equals(nameof(DefinedPaymentStatus.Paid))).Sum(s => s.TotalAmount);
+
+    public decimal TotalAmountPaid => RepaymentTransactions.Sum(t => t.AmountPaid);
+
     public virtual LoanReadViewModel LoanProduct { get; set; }
     public virtual CustomerReadViewModel Customer { get; set; }
-    public virtual ICollection<LoanApplicationFeeReadViewModel> LoanFees { get; set; } = [];
-    public virtual ICollection<RepaymentScheduleReadViewModel> RepaymentSchedules { get; set; } = [];
-    public virtual ICollection<RepaymentTransactionReadViewModel> RepaymentTransactions { get; set; } = [];
-    public virtual ICollection<PenaltyTransactionReadViewModel> PenaltyTransactions { get; set; } = [];
+    public virtual IList<LoanApplicationFeeReadViewModel> LoanFees { get; set; } = [];
+    public virtual IList<RepaymentScheduleReadViewModel> RepaymentSchedules { get; set; } = [];
+    public virtual IList<RepaymentTransactionReadViewModel> RepaymentTransactions { get; set; } = [];
+    public virtual IList<PenaltyTransactionReadViewModel> PenaltyTransactions { get; set; } = [];
 }

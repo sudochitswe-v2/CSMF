@@ -1,52 +1,420 @@
-﻿@{
-    ViewBag.Title = "Dashboard";
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
+<div class="container-fluid px-4 mt-3">
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary mb-3">
-            <div class="card-header">Users</div>
-            <div class="card-body">
-                <h5 class="card-title">1,245</h5>
-                <p class="card-text">Total registered users.</p>
+    <!-- Header and Branch Filter -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6 fw-bold text-primary">
+        </h1>
+        <div class="w-25">
+            <select id="branchFilter" class="form-select shadow-sm"
+                    asp-for="SelectedBranchId"
+                    asp-items="@(new SelectList(Model.Branches, "Id", "Name"))">
+                <option value="0">All Branches</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Key Metrics Cards - Enhanced with Icons and Animations -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-lg border-start border-5 border-primary h-100 hover-scale">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">TOTAL LOANS</h6>
+                            <h2 class="fw-bold">@Model.TotalLoans</h2>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-bank text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    @*<div class="mt-3">
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-arrow-up-right-circle text-success me-1"></i>
+                            @Model.TotalLoans% from last month
+                        </span>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg border-start border-5 border-success h-100 hover-scale">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">ACTIVE LOANS</h6>
+                            <h2 class="fw-bold">@Model.ActiveLoans</h2>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        @*<span class="badge bg-light text-dark">
+                            <i class="bi bi-arrow-up-right-circle text-success me-1"></i>
+                            @Model.ActiveLoans% from last month
+                        </span>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg border-start border-5 border-danger h-100 hover-scale">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">OVERDUE LOANS</h6>
+                            <h2 class="fw-bold">@Model.OverdueLoans</h2>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 p-3 rounded">
+                            <i class="bi bi-exclamation-triangle text-danger" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        @*<span class="badge bg-light text-dark">
+                            <i class="bi bi-arrow-down-right-circle text-danger me-1"></i>
+                            @Model.OverdueLoans% from last month
+                        </span>*@
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success mb-3">
-            <div class="card-header">Products</div>
-            <div class="card-body">
-                <h5 class="card-title">320</h5>
-                <p class="card-text">Available products.</p>
+
+    <!-- Charts Row with Gradient Backgrounds -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-pie-chart me-2"></i>Loan Status Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="loanStatusChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-gradient-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-bar-chart me-2"></i>Loan Amounts by Product
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="loanAmountsChart" height="300"></canvas>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning mb-3">
-            <div class="card-header">Orders</div>
-            <div class="card-body">
-                <h5 class="card-title">150</h5>
-                <p class="card-text">Pending orders today.</p>
+
+    <!-- Financial Summary Cards with Progress Bars -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-cash-coin me-2 text-primary"></i>Outstanding Principal
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-primary">@Model.OutstandingPrincipal.ToString("N0")</h3>
+                    @*<div class="progress mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-primary" style="width: @Model.OutstandingPrincipal%"></div>
+                    </div>*@
+                <small class="text-muted">Unpaid principal amount</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-cash-stack me-2 text-success"></i>Payments Received
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-success">@Model.TotalCollected.ToString("N0")</h3>
+                    @*<div class="progress mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: @Model.TotalCollected%"></div>
+                    </div>*@
+                <small class="text-muted">Total collected so far</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-receipt me-2 text-warning"></i>Fees Collected
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-warning">@Model.TotalFeesCollected.ToString("N0")</h3>
+                    @*<div class="progress mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: @Model.TotalFeesCollected%"></div>
+                    </div>*@
+                    <small class="text-muted">From service/late fees</small>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-danger mb-3">
-            <div class="card-header">Revenue</div>
-            <div class="card-body">
-                <h5 class="card-title">$18,430</h5>
-                <p class="card-text">Total sales this month.</p>
-            </div>
+
+    <!-- Upcoming Repayments with Status Indicators -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-header bg-gradient-secondary text-white">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-calendar-check me-2"></i>Upcoming Repayments (Next 7 Days)
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.UpcomingRepayments.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Customer</th>
+                                <th class="text-center">Installment</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var repayment in Model.UpcomingRepayments)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-light rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-person-fill text-muted"></i>
+                                            </div>
+                                            <span>@repayment.CustomerName</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">@repayment.InstallmentNumber</td>
+                                    <td>
+                                        @if (repayment.DueDate.Date == DateTime.Today)
+                                        {
+                                            <span class="badge bg-danger me-1">TODAY</span>
+                                        }
+                                        @repayment.DueDate.ToShortDateString()
+                                    </td>
+                                    <td class="text-end fw-bold">@repayment.TotalAmount.ToString("N0")</td>
+                                    <td class="text-center">
+                                        @if (repayment.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-clock-history me-1"></i>Pending
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                <i class="bi bi-check-circle me-1"></i>@repayment.Status
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> View
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                    <h5 class="mt-3">No upcoming repayments in the next 7 days</h5>
+                    <p class="text-muted">All caught up with repayments!</p>
+                </div>
+            }
         </div>
     </div>
 </div>
 
-<div class="mt-4">
-    <h4>Recent Activity</h4>
-    <ul class="list-group">
-        <li class="list-group-item">User "JohnDoe" registered.</li>
-        <li class="list-group-item">Product "Wireless Mouse" added.</li>
-        <li class="list-group-item">Order #1234 completed.</li>
-    </ul>
-</div>
+<!-- Scripts for Charts -->
+@*@section Styles {*@
+<style>
+    .hover-scale {
+        transition: transform 0.2s ease;
+    }
+
+        .hover-scale:hover {
+            transform: translateY(-5px);
+        }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .bg-gradient-secondary {
+        background: linear-gradient(135deg, #757f9a 0%, #d7dde8 100%);
+    }
+
+    .avatar-sm {
+        width: 32px;
+        height: 32px;
+    }
+</style>
+@*}*@
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const loanStatusData = @Html.Raw(Json.Serialize(Model.LoanStatusCounts));
+        const loanAmountsData = @Html.Raw(Json.Serialize(Model.LoanAmountsByProduct));
+
+        // Loan Status Chart - Doughnut with Animation
+        const ctx1 = document.getElementById('loanStatusChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(loanStatusData),
+                datasets: [{
+                    data: Object.values(loanStatusData),
+                    backgroundColor: [
+                        '#3a7bd5',
+                        '#00d2ff',
+                        '#f46b45',
+                        '#ff9966',
+                        '#a8ff78'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+
+        // Loan Amounts by Product Chart - Horizontal Bar with Gradient
+        const ctx2 = document.getElementById('loanAmountsChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(loanAmountsData),
+                datasets: [{
+                    label: 'Loan Amounts',
+                    data: Object.values(loanAmountsData),
+                    backgroundColor: [
+                        'rgba(58, 123, 213, 0.8)',
+                        'rgba(0, 210, 255, 0.8)',
+                        'rgba(244, 107, 69, 0.8)',
+                        'rgba(255, 153, 102, 0.8)',
+                        'rgba(168, 255, 120, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(58, 123, 213, 1)',
+                        'rgba(0, 210, 255, 1)',
+                        'rgba(244, 107, 69, 1)',
+                        'rgba(255, 153, 102, 1)',
+                        'rgba(168, 255, 120, 1)'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    hoverBackgroundColor: [
+                        'rgba(58, 123, 213, 1)',
+                        'rgba(0, 210, 255, 1)',
+                        'rgba(244, 107, 69, 1)',
+                        'rgba(255, 153, 102, 1)',
+                        'rgba(168, 255, 120, 1)'
+                    ]
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.parsed.x.toLocaleString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#branchFilter').on('change', function () {
+                var branchId = $(this).val();
+                window.location.href = '/?branchId=' + branchId;
+            });
+        });
+    </script>
+}

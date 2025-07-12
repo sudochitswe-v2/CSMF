@@ -49,6 +49,10 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        <a asp-controller="Reports" asp-action="CustomerLoanStatements" asp-route-id="@customer.Id" class="btn btn-sm btn-outline-info me-2">
+                            <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+                            Statements
+                        </a>
 
                     </td>
                 </tr>

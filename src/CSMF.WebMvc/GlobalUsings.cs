@@ -1,5 +1,7 @@
 ﻿global using CSMF.WebMvc.Domain.Constants;
 global using CSMF.WebMvc.Models.Customers;
+global using CSMF.WebMvc.Models.Dashboard;
+global using CSMF.WebMvc.Models.Reports;
 global using CSMF.WebMvc.Models.Documents;
 global using CSMF.WebMvc.Models.Branches;
 global using CSMF.WebMvc.Models.Grantors;

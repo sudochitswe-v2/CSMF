@@ -4,6 +4,7 @@ using CSMF.WebMvc.Models.Branches;
 using CSMF.WebMvc.Models.Customers;
 using CSMF.WebMvc.Models.Users;
 using CSMF.WebMvc.Services;
+using CSMF.WebMvc.Services.Reports;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CSMF.WebMvc.Controllers
 {
-    public class CustomersController(IHttpContextExtractorService httpExtractor, ApplicationDbContext dbContext) : Controller
+    public class CustomersController(IHttpContextExtractorService httpExtractor, IReportService reportSvc, ApplicationDbContext dbContext) : Controller
     {
         public IActionResult Index()
         {
@@ -207,5 +208,11 @@ namespace CSMF.WebMvc.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public IActionResult LoanStatement(int customerId, int loanId)
+        {
+            var statements = reportSvc.GetCustomerLoanStatements(customerId, loanId);
+            return View(statements);
+        }
     }
 }

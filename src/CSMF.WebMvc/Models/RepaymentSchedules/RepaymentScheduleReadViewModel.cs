@@ -3,6 +3,7 @@ namespace CSMF.WebMvc.Models.RepaymentSchedules;
 
 public class RepaymentScheduleReadViewModel
 {
+    public int Id { get; set; }
     public int LoanApplicationId { get; set; }
     public int InstallmentNumber { get; set; }
     public DateTime DueDate { get; set; }
@@ -14,4 +15,5 @@ public class RepaymentScheduleReadViewModel
     public decimal OutstandingPrincipal { get; set; }
     public string Status { get; set; }
     public DateTime CreatedOn { get; set; }
+    public string CustomerName { get; set; }
 }

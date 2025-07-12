@@ -18,7 +18,8 @@ namespace CSMF.WebMvc.Controllers
                 return BadRequest("Invalid repayment schedule ID.");
             }
 
-            var schedules = db.RepaymentSchedules.Where(s => s.LoanApplicationId == loanApplicationId).Select(s => new InstallmentDto(s.Id, s.Description))
+            var schedules = db.RepaymentSchedules.Where(s => s.LoanApplicationId == loanApplicationId && !s.Status.Equals(nameof(DefinedPaymentStatus.Paid)))
+                .Select(s => new InstallmentDto(s.Id, s.Description))
                 .ToList();
 
             var model = new RepaymentTransactionCreateViewModel

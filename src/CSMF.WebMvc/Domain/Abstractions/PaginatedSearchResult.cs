@@ -4,13 +4,6 @@ namespace CSMF.WebMvc.Domain.Abstractions
 {
     public class PaginatedSearchResult<T>
     {
-        //public PaginatedSearchResult(IEnumerable<T> items, int totalCount, int pageNumber, int pageSize)
-        //{
-        //    Items = items;
-        //    TotalCount = totalCount;
-        //    PageNumber = pageNumber;
-        //    PageSize = pageSize;
-        //}
         public IEnumerable<T> Items { get; set; } = [];
         public int TotalCount { get; set; }
         public int PageNumber { get; set; }

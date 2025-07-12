@@ -1,6 +1,7 @@
 ﻿using CSMF.WebMvc.Data;
 using CSMF.WebMvc.Domain.Entities.LoanApplications;
 using CSMF.WebMvc.Models.LoanApplicationFees;
+using CSMF.WebMvc.Services.LoanApplications;
 using CSMF.WebMvc.Services.RepaymentSchedules;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,8 @@ using MySql.EntityFrameworkCore.Extensions;
 
 namespace CSMF.WebMvc.Controllers
 {
-    public class LoanApplicationsController(IRepaymentScheduleService scheduleSvc, ApplicationDbContext dbContext) : Controller
+    public class LoanApplicationsController(IRepaymentScheduleService scheduleSvc,
+        ILoanFeeService feeSvc, ApplicationDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Index(string search, int page = 1, int size = 10)
         {
@@ -34,6 +36,17 @@ namespace CSMF.WebMvc.Controllers
 
 
             return View(pageResult);
+        }
+
+        public IActionResult Requests()
+        {
+            var pendingLoans = dbContext.LoanApplications
+                .AsNoTracking()
+                .Include(l => l.Customer)
+                .ProjectToType<LoanApplicationReadViewModel>()
+                .Where(l => l.Status == nameof(DefinedLoanApplicationStatus.Requested))
+                .ToList();
+            return View(pendingLoans);
         }
 
         public IActionResult Create([FromQuery] int customer)
@@ -95,8 +108,18 @@ namespace CSMF.WebMvc.Controllers
             dbContext.LoanApplications.Add(application);
             dbContext.SaveChanges(); // Now application.Id is generated
 
-            var schedules = scheduleSvc.GenerateSchedules(application);
-            dbContext.RepaymentSchedules.AddRange(schedules);
+            var fees = feeSvc.GenerateLoanFees(application, model.SelectedFeeIds);
+            if (fees.Count != 0)
+            {
+                dbContext.LoanApplicationFees.AddRange(fees);
+            }
+
+            if (application.Status == nameof(DefinedLoanApplicationStatus.Active))
+            {
+                var schedules = scheduleSvc.GenerateSchedules(application, fees);
+                dbContext.RepaymentSchedules.AddRange(schedules);
+            }
+
 
             dbContext.SaveChanges(); // Save everything in one transaction
 
@@ -104,6 +127,41 @@ namespace CSMF.WebMvc.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public IActionResult UpdateStatus(LoanApplicationStatusChangeModel model)
+        {
+            var application = dbContext.LoanApplications
+                .FirstOrDefault(l => l.Id == model.Id);
+
+            if (application is null)
+            {
+                return NotFound();
+            }
+            application.UpdateModified(User.Identity.Name);
+            application.Status = model.Status;
+
+            if (model.Status.Equals(nameof(DefinedLoanApplicationStatus.Active), StringComparison.OrdinalIgnoreCase))
+            {
+                application.ReleaseDate = DateTime.Now;
+
+                var fees = dbContext.LoanApplicationFees
+                    .AsNoTracking()
+                    .Where(l => l.LoanApplicationId == model.Id)
+                    .ToList();
+
+                if (application.Status == nameof(DefinedLoanApplicationStatus.Active))
+                {
+                    var schedules = scheduleSvc.GenerateSchedules(application, fees);
+                    dbContext.RepaymentSchedules.AddRange(schedules);
+                }
+            }
+
+            dbContext.SaveChanges(); // Save everything in one transaction
+
+            return RedirectToAction(nameof(Index));
+        }
+
         private ICollection<LoanReadViewModel> GetLoans()
         {
             return dbContext.LoanProducts

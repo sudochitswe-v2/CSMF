@@ -1,18 +1,42 @@
-﻿using CSMF.WebMvc.Domain.Entities.LoanApplications;
+﻿using CSMF.WebMvc.Domain.Entities.LoanApplicationFees;
+using CSMF.WebMvc.Domain.Entities.LoanApplications;
 using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
 
 namespace CSMF.WebMvc.Services.RepaymentSchedules;
 public class RepaymentScheduleService(IHttpContextAccessor context) : IRepaymentScheduleService
 {
-    public List<RepaymentSchedule> GenerateSchedules(LoanApplication loan)
+    public List<RepaymentSchedule> GenerateSchedules(LoanApplication loan, ICollection<LoanApplicationFee> fees)
     {
         ValidateLoan(loan);
 
         var schedules = new List<RepaymentSchedule>();
-        var calculation = PrepareCalculation(loan);
 
-        decimal remainingPrincipal = loan.PrincipalAmount;
+        // Step 1: Add fee-based repayment schedules at the beginning
+        int installmentNumber = 1;
         DateTime currentDueDate = loan.ReleaseDate;
+        foreach (var fee in fees)
+        {
+            var feeSchedule = new RepaymentSchedule
+            {
+                LoanApplicationId = loan.Id,
+                InstallmentNumber = installmentNumber++,
+                DueDate = currentDueDate,
+                Description = $"Fee: {fee.FeeName}",
+                FeeAmount = fee.CalculatedAmount,
+                PrincipalAmount = 0,
+                InterestAmount = 0,
+                TotalAmount = fee.CalculatedAmount,
+                OutstandingPrincipal = loan.PrincipalAmount,
+                Status = DefinedPaymentStatus.Pending.ToString()
+            };
+
+            feeSchedule.Create(context?.HttpContext?.User?.Identity?.Name);
+            schedules.Add(feeSchedule);
+        }
+
+        // Step 2: Generate regular repayment schedules
+        var calculation = PrepareCalculation(loan);
+        decimal remainingPrincipal = loan.PrincipalAmount;
         decimal totalInterest = 0;
 
         for (int i = 1; i <= calculation.TotalInstallments; i++)
@@ -21,14 +45,17 @@ public class RepaymentScheduleService(IHttpContextAccessor context) : IRepayment
 
             var installment = CalculateInstallment(loan, calculation, i, remainingPrincipal);
             installment = RoundInstallment(installment, i == calculation.TotalInstallments);
-
             totalInterest += installment.Interest;
 
-            var schedule = CreateSchedule(loan, i, currentDueDate, installment, remainingPrincipal);
+            var schedule = CreateSchedule(loan, installmentNumber++, currentDueDate, installment, remainingPrincipal);
             schedules.Add(schedule);
 
             remainingPrincipal -= installment.Principal;
         }
+
+        AdjustFinalInstallmentIfNeeded(schedules, loan.PrincipalAmount, totalInterest);
+        UpdateLoanTotals(loan, totalInterest);
+        return schedules;
         // Final adjustment to ensure totals match exactly
         AdjustFinalInstallmentIfNeeded(schedules, loan.PrincipalAmount, totalInterest);
         UpdateLoanTotals(loan, totalInterest);
@@ -92,25 +119,6 @@ public class RepaymentScheduleService(IHttpContextAccessor context) : IRepayment
         decimal interest = DefineInterestMethods.Flat.ToString() == loan.InterestMethod
             ? CalculateFlatInterest(loan, calculation)
             : CalculateRealInterest(calculation, remainingPrincipal);
-
-        //decimal interest;
-        //if (loan.InterestMethod == DefineInterestMethods.Flat.ToString())
-        //{
-        //    decimal durationInYears = loan.DurationPeriod.ToLower() switch
-        //    {
-        //        "days" => loan.Duration / 365m,
-        //        "weeks" => loan.Duration / 52m,
-        //        "months" => loan.Duration / 12m,
-        //        "years" => loan.Duration,
-        //        _ => throw new ArgumentException("Invalid duration period.")
-        //    };
-        //    decimal totalInterest = loan.PrincipalAmount * (loan.InterestRate / 100m) * durationInYears;
-        //    interest = Math.Round(totalInterest / calculation.TotalInstallments, 2);
-        //}
-        //else
-        //{
-        //    interest = Math.Round(remainingPrincipal * calculation.RatePerPeriod, 2);
-        //}
 
         decimal principal = installmentNumber == calculation.TotalInstallments
             ? remainingPrincipal

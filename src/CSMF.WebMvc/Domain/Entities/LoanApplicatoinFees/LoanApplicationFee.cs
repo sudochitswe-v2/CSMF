@@ -7,10 +7,8 @@ namespace CSMF.WebMvc.Domain.Entities.LoanApplicationFees
     {
         public int LoanApplicationId { get; set; }
         public string FeeName { get; set; }
-        public string FeeType { get; set; }
-        public int? FeePercentage { get; set; }
-        public decimal? FeeAmount { get; set; }
         public decimal CalculatedAmount { get; set; }
+        public string Status { get; set; }
 
         // Navigation Properties
         public virtual LoanApplication LoanApplication { get; set; }

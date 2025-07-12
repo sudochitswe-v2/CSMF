@@ -9,10 +9,8 @@ public class LoanFeeConfiguration : IEntityTypeConfiguration<LoanApplicationFee>
     {
         builder.HasKey(e => e.Id);
         builder.Property(e => e.FeeName).IsRequired().HasMaxLength(100);
-        builder.Property(e => e.FeeType).IsRequired().HasMaxLength(50);
-        builder.Property(e => e.FeePercentage).HasConversion<int>();
-        builder.Property(e => e.FeeAmount).HasConversion<decimal>().HasPrecision(5, 4);
         builder.Property(e => e.CalculatedAmount).HasConversion<decimal>().HasPrecision(18, 2);
+        builder.Property(e => e.Status).IsRequired().HasMaxLength(50);
 
 
         builder.Property(c => c.CreatedOn).IsRequired().HasColumnType("datetime");
