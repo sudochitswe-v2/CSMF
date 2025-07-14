@@ -58,9 +58,6 @@ public class RepaymentScheduleService(IHttpContextAccessor context) : IRepayment
             remainingPrincipal -= installment.Principal;
         }
 
-        AdjustFinalInstallmentIfNeeded(schedules, loan.PrincipalAmount, totalInterest);
-        UpdateLoanTotals(loan, totalInterest);
-        return schedules;
         // Final adjustment to ensure totals match exactly
         AdjustFinalInstallmentIfNeeded(schedules, loan.PrincipalAmount, totalInterest);
         UpdateLoanTotals(loan, totalInterest);

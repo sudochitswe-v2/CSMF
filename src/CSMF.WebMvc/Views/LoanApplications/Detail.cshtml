@@ -118,6 +118,8 @@
                                     <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.TotalAmountDue.ToString("N0") </dd>
                                     <dt class="col-sm-5">Total Amount Paid</dt>
                                     <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.TotalAmountPaid.ToString("N0") </dd>
+                                    <dt class="col-sm-5">Unpaid Penalties </dt>
+                                    <dd class="col-sm-7"><i class="bi bi-currency-dollar me-1"></i>@Model.UnpaidPenalties.ToString("N0") </dd>
                                 </dl>
                             </div>
                         </div>
@@ -182,6 +184,7 @@
                                     <th>Type</th>
                                     <th>Amount</th>
                                     <th>Description</th>
+                                    <th>Staus</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -192,6 +195,11 @@
                                         <td>@penalty.PenaltyType</td>
                                         <td>@penalty.PenaltyAmount.ToString("N0")</td>
                                         <td>@penalty.Description</td>
+                                        <td>
+                                            <span class="badge @penalty.Status.ToPaymentStatusBootstrapClass()">
+                                                @penalty.Status
+                                            </span>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>

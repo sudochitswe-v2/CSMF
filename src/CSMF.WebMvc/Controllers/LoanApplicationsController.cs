@@ -4,6 +4,9 @@ using CSMF.WebMvc.Models.LoanApplicationFees;
 using CSMF.WebMvc.Services.LoanApplications;
 using CSMF.WebMvc.Services.RepaymentSchedules;
 using Mapster;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MySql.EntityFrameworkCore.Extensions;
@@ -38,6 +41,8 @@ namespace CSMF.WebMvc.Controllers
             return View(pageResult);
         }
 
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager))]
         public IActionResult Requests()
         {
             var pendingLoans = dbContext.LoanApplications

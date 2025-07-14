@@ -1,5 +1,5 @@
 ﻿using CSMF.WebMvc.Domain.Entities.LoanApplicationFees;
-using CSMF.WebMvc.Domain.Entities.LoanApplications;
+using CSMF.WebMvc.Domain.Entities.PenaltyTransactions;
 using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
 using CSMF.WebMvc.Domain.Entities.RepaymentTransactions;
 using Microsoft.EntityFrameworkCore;
@@ -18,19 +18,23 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
             // Load related data
             var schedules = await GetSchedulesForLoan(model.LoanApplicationId);
             var fees = await GetFeesForLoan(model.LoanApplicationId);
+            var panalties = await GetPenaltiesForLoan(model.LoanApplicationId);
+            var user = contextAccessor.HttpContext?.User?.Identity?.Name ?? "RepaymentSvc";
 
             // Process payment allocation
             var paymentProcessor = new PaymentProcessor(
                 model,
                 schedules,
                 fees,
-                contextAccessor.HttpContext?.User?.Identity?.Name);
+                panalties,
+                user);
 
             var transactions = paymentProcessor.AllocatePayment();
             var updatedFees = paymentProcessor.UpdateFeeStatuses();
+            var updatedPenalties = paymentProcessor.UpdatePenaltyTransactions();
 
             // Save changes
-            await SaveChanges(transactions, updatedFees);
+            await SaveChanges(transactions, updatedFees, updatedPenalties);
         }
 
         private async Task<List<RepaymentSchedule>> GetSchedulesForLoan(int loanApplicationId)
@@ -48,13 +52,21 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
                 .Where(f => f.LoanApplicationId == loanApplicationId)
                 .ToListAsync();
         }
+        private async Task<List<PenaltyTransaction>> GetPenaltiesForLoan(int loanApplicationId)
+        {
+            return await db.PenaltyTransactions
+                .Where(p => p.LoanApplicationId == loanApplicationId && p.Status != "Paid")
+                .ToListAsync();
+        }
 
         private async Task SaveChanges(
             IEnumerable<RepaymentTransaction> transactions,
-            IEnumerable<LoanApplicationFee> updatedFees)
+            IEnumerable<LoanApplicationFee> updatedFees,
+            IEnumerable<PenaltyTransaction> updatedPenalties)
         {
             db.RepaymentTransactions.AddRange(transactions);
             db.LoanApplicationFees.UpdateRange(updatedFees);
+            db.PenaltyTransactions.UpdateRange(updatedPenalties);
             await db.SaveChangesAsync();
         }
     }
@@ -64,6 +76,7 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
         private readonly RepaymentTransactionCreateViewModel _model;
         private readonly List<RepaymentSchedule> _schedules;
         private readonly List<LoanApplicationFee> _fees;
+        private readonly List<PenaltyTransaction> _penalties;
         private readonly string _currentUser;
         private decimal _remainingAmount;
 
@@ -71,11 +84,13 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
             RepaymentTransactionCreateViewModel model,
             List<RepaymentSchedule> schedules,
             List<LoanApplicationFee> fees,
+            List<PenaltyTransaction> penalties,
             string currentUser)
         {
             _model = model;
             _schedules = schedules;
             _fees = fees;
+            _penalties = penalties;
             _currentUser = currentUser;
             _remainingAmount = CalculateTotalPaymentAmount();
         }
@@ -119,6 +134,25 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
 
             return updatedFees;
         }
+        public IEnumerable<PenaltyTransaction> UpdatePenaltyTransactions()
+        {
+            var updatedPenalties = new List<PenaltyTransaction>();
+            var penaltyPaymentAmount = _model.PenaltyPaid ?? 0;
+
+            foreach (var penalty in _penalties.OrderBy(f => f.Id))
+            {
+                if (penaltyPaymentAmount <= 0) break;
+                if (IsFeeFullyPaid(penalty)) continue;
+
+                var amountToPay = Math.Min(penalty.PenaltyAmount - GetPaidAmount(penalty), penaltyPaymentAmount);
+                penaltyPaymentAmount -= amountToPay;
+
+                UpdatePenaltyStatus(penalty, amountToPay);
+                updatedPenalties.Add(penalty);
+            }
+
+            return updatedPenalties;
+        }
 
         private decimal CalculateTotalPaymentAmount()
         {
@@ -139,11 +173,20 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
         {
             return fee.Status == Enum.GetName(DefinedPaymentStatus.Paid);
         }
+        private static bool IsFeeFullyPaid(PenaltyTransaction penalty)
+        {
+            return penalty.Status == Enum.GetName(DefinedPaymentStatus.Paid);
+        }
 
         private static decimal GetPaidAmount(LoanApplicationFee fee)
         {
             // If track partial payments, implement logic here
             return fee.Status == Enum.GetName(DefinedPaymentStatus.Paid) ? fee.CalculatedAmount : 0;
+        }
+        private static decimal GetPaidAmount(PenaltyTransaction penalty)
+        {
+            // If track partial payments, implement logic here
+            return penalty.Status == Enum.GetName(DefinedPaymentStatus.Paid) ? penalty.PenaltyAmount : 0;
         }
 
         private RepaymentTransaction CreateTransactionForSchedule(RepaymentSchedule schedule)
@@ -167,7 +210,7 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
             };
         }
 
-        private void UpdateScheduleStatus(RepaymentSchedule schedule, RepaymentTransaction transaction)
+        private static void UpdateScheduleStatus(RepaymentSchedule schedule, RepaymentTransaction transaction)
         {
             schedule.OutstandingPrincipal = Math.Max(0, schedule.OutstandingPrincipal - transaction.PrincipalPaid);
 
@@ -177,7 +220,7 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
                 : Enum.GetName(DefinedPaymentStatus.PartiallyPaid);
         }
 
-        private void UpdateFeeStatus(LoanApplicationFee fee, decimal amountPaid)
+        private static void UpdateFeeStatus(LoanApplicationFee fee, decimal amountPaid)
         {
             var isFullyPaid = amountPaid >= fee.CalculatedAmount;
             var isPartiallyPaid = amountPaid > 0 && !isFullyPaid;
@@ -187,6 +230,17 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
                 : isPartiallyPaid
                     ? Enum.GetName(DefinedPaymentStatus.PartiallyPaid)
                     : fee.Status; // Keep existing status if no payment applied
+        }
+        private static void UpdatePenaltyStatus(PenaltyTransaction penalty, decimal amountPaid)
+        {
+            var isFullyPaid = amountPaid >= penalty.PenaltyAmount;
+            var isPartiallyPaid = amountPaid > 0 && !isFullyPaid;
+
+            penalty.Status = isFullyPaid
+                ? Enum.GetName(DefinedPaymentStatus.Paid)
+                : isPartiallyPaid
+                    ? Enum.GetName(DefinedPaymentStatus.PartiallyPaid)
+                    : penalty.Status; // Keep existing status if no payment applied
         }
 
         private void ValidateNoOverpayment()
@@ -222,14 +276,12 @@ namespace CSMF.WebMvc.Services.RepaymentTransactions
 
             return (principal, interest, fee, penalty);
         }
-        private decimal GetRemainingScheduleAmount(RepaymentSchedule schedule)
+        private static decimal GetRemainingScheduleAmount(RepaymentSchedule schedule)
         {
             var totalPaid = schedule.RepaymentTransactions.Sum(t =>
                 t.PrincipalPaid + t.InterestPaid + t.FeePaid + t.PenaltyPaid);
             return schedule.TotalAmount - totalPaid;
         }
-
-
         private static decimal CalculateComponentPayment(decimal availableAmount, decimal totalAmount, decimal alreadyPaid)
         {
             var remaining = totalAmount - alreadyPaid;

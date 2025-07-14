@@ -26,7 +26,10 @@ public class LoanApplicationDeatilViewModel
     public decimal TotalAmountDue => RepaymentSchedules
         .Where(s => !s.Status.Equals(nameof(DefinedPaymentStatus.Paid))).Sum(s => s.TotalAmount);
 
-    public decimal TotalAmountPaid => RepaymentTransactions.Sum(t => t.AmountPaid);
+    public decimal TotalAmountPaid => RepaymentTransactions.Sum(t => t.AmountPaid) + UnpaidPenalties;
+    public decimal TotalPenalties => PenaltyTransactions.Sum(t => t.PenaltyAmount);
+    public decimal UnpaidPenalties => PenaltyTransactions
+        .Where(t => !t.Status.Equals(nameof(DefinedPaymentStatus.Paid))).Sum(t => t.PenaltyAmount);
 
     public virtual LoanReadViewModel LoanProduct { get; set; }
     public virtual CustomerReadViewModel Customer { get; set; }
