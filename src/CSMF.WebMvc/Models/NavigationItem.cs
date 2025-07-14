@@ -242,45 +242,50 @@ public class NavGroupExtentions
                 }
         };
     }
-    private static NavigationItem Settings()
+    private static NavigationItem Systems()
     {
         return new NavigationItem
         {
-            Title = "Settings",
+            Title = "Systems",
             Icon = "bi-gear",
-            Controller = "Settings",
+            Controller = "Systems",
             Children = new List<NavigationItem>
                 {
-                    new NavigationItem {
-                        Title = "System Configuration",
-                        Action = "General",
-                        Icon = "bi-sliders"
-                    },
-                    new NavigationItem {
-                        Title = "Security Settings",
-                        Action = "Security",
-                        Icon = "bi-shield-check"
-                    },
-                    new NavigationItem {
-                        Title = "Loan Products Setup",
-                        Action = "LoanProducts",
-                        Icon = "bi-box-seam"
-                    },
-                    new NavigationItem {
-                        Title = "Fee Configuration",
-                        Action = "Fees",
-                        Icon = "bi-cash-stack"
-                    },
+                    //new NavigationItem {
+                    //    Title = "System Configuration",
+                    //    Action = "General",
+                    //    Icon = "bi-sliders"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Security Settings",
+                    //    Action = "Security",
+                    //    Icon = "bi-shield-check"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Loan Products Setup",
+                    //    Action = "LoanProducts",
+                    //    Icon = "bi-box-seam"
+                    //},
+                    //new NavigationItem {
+                    //    Title = "Fee Configuration",
+                    //    Action = "Fees",
+                    //    Icon = "bi-cash-stack"
+                    //},
                     new NavigationItem {
                         Title = "Backup & Restore",
-                        Action = "Backup",
+                        Action = "Backups",
                         Icon = "bi-cloud-arrow-up"
                     },
                     new NavigationItem {
-                        Title = "System Updates",
-                        Action = "Updates",
-                        Icon = "bi-download"
-                    }
+                        Title = "System Jobs",
+                        Action = "Hangfire",
+                        Icon = "bi-stopwatch-fill"
+                    },
+                    //new NavigationItem {
+                    //    Title = "System Updates",
+                    //    Action = "Updates",
+                    //    Icon = "bi-download"
+                    //}
                 }
         };
     }
@@ -300,7 +305,7 @@ public class NavGroupExtentions
             //Repayments(),
             Reports(),
             UsersAndRoles(),
-            Settings(),
+            Systems(),
         }
         };
     }

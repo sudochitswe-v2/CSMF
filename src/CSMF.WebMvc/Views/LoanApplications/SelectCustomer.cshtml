@@ -90,8 +90,8 @@
 
                             <li class="page-item @nextDisabled">
                                 <a class="page-link" asp-action="SelectCustomer"
-                                   asp-route-pageNumber="@(Model.PageNumber + 1)"
-                                   asp-route-pageSize="@Model.PageSize"
+                                   asp-route-page="@(Model.PageNumber + 1)"
+                                   asp-route-size="@Model.PageSize"
                                    asp-route-searchTerm="@Model.SearchTerm">
                                     Next
                                 </a>

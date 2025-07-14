@@ -93,7 +93,7 @@ namespace CSMF.WebMvc.Controllers
                 model.LoanProducts = GetLoans();
                 return View(model);
             }
-            if (!(loan.MinPrincipalAmount < model.PrincipalAmount) && !(loan.MaxPrincipalAmount < model.PrincipalAmount))
+            if (!(loan.MinPrincipalAmount <= model.PrincipalAmount) && !(loan.MaxPrincipalAmount <= model.PrincipalAmount))
             {
                 ModelState.AddModelError("PrincipalAmount", $"Principal Amount must be between {loan.MinPrincipalAmount} and {loan.MaxPrincipalAmount}");
                 model.LoanProducts = GetLoans();

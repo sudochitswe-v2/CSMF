@@ -5,8 +5,6 @@
 }
 
 <div class="container mt-4">
-    <h3 class="mb-4">Loan Application Details</h3>
-
     <!-- Back Button -->
     <div class="mb-4">
         <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
@@ -67,7 +65,7 @@
                             }
 
 
-                            <span class="badge @loanStatusBg text-dark me-2">@Model.Status</span>
+                            <span class="badge @loanStatusBg me-2">@Model.Status</span>
                             <a href="#" class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-pencil-square"></i>
                             </a>

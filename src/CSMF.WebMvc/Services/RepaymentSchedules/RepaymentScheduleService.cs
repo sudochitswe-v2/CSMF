@@ -3,6 +3,11 @@ using CSMF.WebMvc.Domain.Entities.LoanApplications;
 using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
 
 namespace CSMF.WebMvc.Services.RepaymentSchedules;
+
+public interface IRepaymentScheduleService
+{
+    List<RepaymentSchedule> GenerateSchedules(LoanApplication loan, ICollection<LoanApplicationFee> fees);
+}
 public class RepaymentScheduleService(IHttpContextAccessor context) : IRepaymentScheduleService
 {
     public List<RepaymentSchedule> GenerateSchedules(LoanApplication loan, ICollection<LoanApplicationFee> fees)
@@ -101,6 +106,7 @@ public class RepaymentScheduleService(IHttpContextAccessor context) : IRepayment
 
     private static decimal RoundToNearest500(decimal amount)
     {
+        if (amount < 500) return amount;
         return Math.Round(amount / 500) * 500;
     }
 

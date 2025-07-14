@@ -30,8 +30,7 @@ namespace CSMF.WebMvc.Models.LoanApplications
         public string RepaymentCycle { get; set; }
         [Required(ErrorMessage = "Repayment day is required.")]
         public int RepaymentDay { get; set; }
-
-        public string SelectedFeeIds { get; set; }
+        public string? SelectedFeeIds { get; set; }
 
         public virtual CustomerReadViewModel? SelectedCustomer { get; set; }
         public virtual ICollection<LoanReadViewModel> LoanProducts { get; set; } = [];

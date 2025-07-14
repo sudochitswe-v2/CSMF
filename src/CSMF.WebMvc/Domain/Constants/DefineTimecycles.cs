@@ -2,7 +2,7 @@
 {
     public enum DefineTimecycles
     {
-        Once,
+        //Once,
         Daily,
         Weekly,
         Monthly,

@@ -7,14 +7,16 @@ namespace CSMF.WebMvc.Services.LoanApplications
 {
     public interface ILoanFeeService
     {
-        ICollection<LoanApplicationFee> GenerateLoanFees(LoanApplication application, string feeIds);
+        ICollection<LoanApplicationFee> GenerateLoanFees(LoanApplication application, string? feeIds);
     }
     public class LoanFeeService(ApplicationDbContext db, IHttpContextAccessor contextAccessor) : ILoanFeeService
     {
         public string User => contextAccessor.HttpContext?.User?.Identity?.Name ?? "Svc";
-        public ICollection<LoanApplicationFee> GenerateLoanFees(LoanApplication application, string feeIds)
+        public ICollection<LoanApplicationFee> GenerateLoanFees(LoanApplication application, string? feeIds)
         {
-            var feeIdsArray = feeIds.Split(';').Select(int.Parse).ToHashSet();
+            var feeIdsArray = string.IsNullOrEmpty(feeIds) ?
+                Array.Empty<int>() :
+                feeIds.Split(',').Select(int.Parse).ToArray();
 
             var fees = db.LoanFees
                 .AsNoTracking()
