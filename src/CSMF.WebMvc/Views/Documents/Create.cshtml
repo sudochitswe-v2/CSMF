@@ -54,8 +54,13 @@
                         <!-- Document Type -->
                         <div class="mb-3">
                             <label asp-for="DocumentType" class="form-label"></label>
-                            <input asp-for="DocumentType" class="form-control" />
-                            <small class="form-text text-muted">e.g., ID Card, Passport, Bank Statement</small>
+                            @*<input asp-for="DocumentType" class="form-control" />*@
+                            <select class="form-select shadow-sm"
+                                    asp-for="DocumentType"
+                                    asp-items="@(new SelectList(Model.DocTypes))">
+                                <option value="">-- Select Document Type --</option>
+                            </select>
+                            @*<small class="form-text text-muted">e.g., ID Card, Passport, Bank Statement</small>*@
                             <span asp-validation-for="DocumentType" class="text-danger d-block mt-1"></span>
                         </div>
 

@@ -9,23 +9,38 @@ using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CSMF.WebMvc.Controllers
 {
     public class CustomersController(IHttpContextExtractorService httpExtractor, IReportService reportSvc, ApplicationDbContext dbContext) : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string search, int page = 1, int size = 10)
         {
             var branches = httpExtractor.GetBranchIdFromUserClaims();
+            var query = dbContext.Customers
+               .AsNoTracking()
+               .Include(l => l.Branch)
+               .ProjectToType<CustomerReadViewModel>()
+               .OrderBy(l => l.Id)
+               .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(l =>
+                    EF.Functions.Like(l.FirstName, $"%{search}%") ||
+                    EF.Functions.Like(l.LastName, $"%{search}%") ||
+                    EF.Functions.Like(l.IdentificationNumber, $"%{search}%")
+                    && branches.Contains(l.BranchId));
+            }
+
+            var pageResult = await PaginatedSearchResult<CustomerReadViewModel>.PaginatedQueryAsync(
+                query, page, size);
+
+            pageResult.SearchTerm = search;
 
 
-            var customers = dbContext.Customers
-                             .AsNoTracking()
-                             .Include(c => c.Branch)
-                             .ProjectToType<CustomerReadViewModel>()
-                             .Where(c => branches.Contains(c.BranchId))
-                             .ToList();
-            return View(customers);
+            return View(pageResult);
         }
 
         public IActionResult Create()

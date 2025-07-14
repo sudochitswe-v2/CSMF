@@ -22,6 +22,7 @@ namespace CSMF.WebMvc.Controllers
                 .AsNoTracking()
                 .Include(l => l.Customer)
                 .ProjectToType<LoanApplicationReadViewModel>()
+                .OrderBy(l => l.ReleaseDate)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))

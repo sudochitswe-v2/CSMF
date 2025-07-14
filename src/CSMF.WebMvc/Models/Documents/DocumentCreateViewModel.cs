@@ -20,6 +20,8 @@ public class DocumentCreateViewModel
     [Display(Name = "Description (Optional)")]
     public string? Description { get; set; }
 
+    public IList<string> DocTypes => Enum.GetNames(typeof(DefinedDocs)).ToList();
+
     [ValidateNever]
     public virtual CustomerReadViewModel Customer { get; set; }
 }
