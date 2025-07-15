@@ -19,6 +19,7 @@ public class DocumentCreateViewModel
 
     [Display(Name = "Description (Optional)")]
     public string? Description { get; set; }
+    public bool IsVerified { get; set; } = false;
 
     public IList<string> DocTypes => Enum.GetNames(typeof(DefinedDocs)).ToList();
 

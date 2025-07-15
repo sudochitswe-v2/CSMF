@@ -71,6 +71,23 @@
                             <span asp-validation-for="File" class="text-danger d-block mt-1"></span>
                         </div>
 
+                        <!-- IsVerified Checkbox -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center">
+                                <div class="form-check form-switch me-3">
+                                    <input asp-for="IsVerified" class="form-check-input" type="checkbox" role="switch"
+                                           id="isVerifiedSwitch" style="width: 3em; height: 1.5em; cursor: pointer;">
+                                </div>
+                                <div>
+                                    <label class="form-check-label fw-bold" for="isVerifiedSwitch" style="cursor: pointer;">
+                                        Document Verified
+                                    </label>
+                                    <p class="text-muted small mb-0">Mark this document as officially verified</p>
+                                    <span asp-validation-for="IsVerified" class="text-danger small d-block"></span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Description -->
                         <div class="mb-3">
                             <label asp-for="Description" class="form-label"></label>

@@ -20,13 +20,27 @@ namespace CSMF.WebMvc.Controllers
         }
         public IActionResult Create()
         {
-            return View(new LoanCreateViewModel());
+            var model = new LoanCreateViewModel();
+
+            model.LevelItems = Enum.GetNames(typeof(DefinedCustomerLevel))
+            .Select(level => new CheckboxItem
+            {
+                Name = level,
+                IsChecked = false
+            }).ToList();
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(LoanCreateViewModel model)
         {
+            model.EligibleLevels = string.Join(";",
+            model.LevelItems
+               .Where(x => x.IsChecked)
+               .Select(x => x.Name));
+
             if (!ModelState.IsValid)
             {
                 return View(model);

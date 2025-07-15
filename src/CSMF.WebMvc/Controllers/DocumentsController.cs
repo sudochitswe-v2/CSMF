@@ -84,7 +84,8 @@ namespace CSMF.WebMvc.Controllers
                 Data = memoryStream.ToArray(), // Save as byte[]
                 DocumentType = model.DocumentType,
                 Description = model.Description,
-                CustomerId = model.CustomerId
+                CustomerId = model.CustomerId,
+                IsVerified = model.IsVerified
             };
             document.Create(User.Identity.Name);
             dbContext.Documents.Add(document);
@@ -123,6 +124,23 @@ namespace CSMF.WebMvc.Controllers
             dbContext.Documents.Remove(document);
             await dbContext.SaveChangesAsync();
 
+            return RedirectToAction("Detail", "Customers", new { id = document.CustomerId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Verified(int id)
+        {
+            var document = await dbContext.Documents
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (document == null)
+            {
+                return NotFound();
+            }
+            document.IsVerified = true;
+            document.UpdateModified(User.Identity.Name);
+            dbContext.SaveChanges();
             return RedirectToAction("Detail", "Customers", new { id = document.CustomerId });
         }
     }

@@ -32,8 +32,12 @@ public class DocumentConfiguration : IEntityTypeConfiguration<Document>
             builder.Property(d => d.Description)
                 .IsRequired(false)
                 .HasMaxLength(500);
-                
-            builder.Property(c => c.CreatedOn).IsRequired().HasColumnType("datetime");
+
+        builder.Property(d => d.IsVerified)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+        builder.Property(c => c.CreatedOn).IsRequired().HasColumnType("datetime");
             builder.Property(c => c.CreatedBy).IsRequired().HasMaxLength(50);
             builder.Property(c => c.ModifiedOn).HasColumnType("datetime");
             builder.Property(c => c.ModifiedBy).HasMaxLength(50);

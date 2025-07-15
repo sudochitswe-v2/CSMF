@@ -10,6 +10,11 @@ namespace CSMF.WebMvc.Models.Loans
         public string ProductTitle { get; set; }
         public string Description { get; set; } = string.Empty;
 
+        [Display(Name = "Eligible Levels")]
+        public string EligibleLevels { get; set; } = "";
+        public List<CheckboxItem> LevelItems { get; set; } = new();
+
+
         [Required(ErrorMessage = "Principal amount is required.")]
         public decimal MinPrincipalAmount { get; set; }
         [Required(ErrorMessage = "Maximum principal amount is required.")]
@@ -79,5 +84,11 @@ namespace CSMF.WebMvc.Models.Loans
         [RequiredIfPenaltyEnabled(ErrorMessage = "Recurring penalty type is required when late penalty is enabled.")]
         public string? RecurringPenaltyType { get; set; }
         #endregion
+    }
+
+    public class CheckboxItem
+    {
+        public string Name { get; set; } = "";
+        public bool IsChecked { get; set; }
     }
 }

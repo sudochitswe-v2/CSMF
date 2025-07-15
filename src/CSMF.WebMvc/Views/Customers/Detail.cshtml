@@ -82,9 +82,23 @@
                                                 <small class="text-muted fst-italic">@doc.Description</small>
                                             </div>
                                         }
+                                        <span class="badge @doc.GetVerifiedStatusClass">
+                                            @doc.GetVerifiedStatus
+                                        </span>
 
                                     </div>
                                     <div>
+                                        @if (!doc.IsVerified)
+                                        {
+                                            <!-- Download Verify Button -->
+                                            <form asp-controller="Documents" asp-action="Verified" asp-route-id="@doc.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-success me-2"
+                                                        data-bs-toggle="tooltip">
+                                                    <i class="bi bi-check"></i>
+                                                </button>
+                                            </form>
+                                        }
+
                                         <!-- Download Button -->
                                         <a asp-controller="Documents" asp-action="Download" asp-route-id="@doc.Id"
                                            class="btn btn-sm btn-outline-primary me-2"

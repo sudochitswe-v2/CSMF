@@ -14,7 +14,8 @@ public class Document : BaseEntity<Document>
     public string Extension { get; set; }
     public string? Description { get; set; }
     public string DocumentType { get; set; }
-    
+    public bool IsVerified { get; set; }
+
     public virtual Customer Customer { get; set; }
     
     [NotMapped]

@@ -11,7 +11,10 @@ public class DocumentReadViewModel
     public string Extension { get; set; }
     public string Description { get; set; }
     public string DocumentType { get; set; }
-    
+    public bool IsVerified { get; set; }
+    public string GetVerifiedStatus => IsVerified ? "Verified" : "Unverified";
+    public string GetVerifiedStatusClass => IsVerified ? "bg-success" : "bg-secondary";
+
     public string DisplaySize => FormatFileSize(Size);
 
     public string FullName => $"{Name}{Extension}";
