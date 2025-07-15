@@ -15,6 +15,7 @@ namespace CSMF.WebMvc.Domain.Entities.Customers
             entity.Property(e => e.Phone).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Address).HasColumnType("text");
             entity.Property(e => e.IdentificationNumber).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Level).IsRequired().HasDefaultValue(nameof(DefinedCustomerLevel.Level0)).HasMaxLength(50);
 
             entity.Property(c => c.CreatedOn).IsRequired().HasColumnType("datetime");
             entity.Property(c => c.CreatedBy).IsRequired().HasMaxLength(50);

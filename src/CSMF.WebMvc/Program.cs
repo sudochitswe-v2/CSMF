@@ -3,6 +3,7 @@ using CSMF.WebMvc.BackgroundJobs;
 using CSMF.WebMvc.Data.Seeders;
 using CSMF.WebMvc.Domain.Entities.Users;
 using CSMF.WebMvc.Services;
+using CSMF.WebMvc.Services.Customers;
 using CSMF.WebMvc.Services.LoanApplications;
 using CSMF.WebMvc.Services.RepaymentSchedules;
 using CSMF.WebMvc.Services.RepaymentTransactions;
@@ -75,12 +76,12 @@ else
         PrepareSchemaIfNecessary = true,
         DashboardJobListLimit = 50000,
         TransactionTimeout = TimeSpan.FromMinutes(1),
-        TablesPrefix = "z_hangfire_", 
+        TablesPrefix = "z_hangfire_",
     };
     var storage = new MySqlStorage(hangfireConnectionString, options);
 
     builder.Services.AddHangfire(config => config.UseStorage(storage));
-    
+
 }
 
 
@@ -95,6 +96,7 @@ builder.Services.AddScoped<IRepaymentTransactionService, RepaymentTransactionSer
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IExporterService, ExporterService>();
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddScoped<ILoanMonitoringService, LoanMonitoringService>();
 builder.Services.AddSingleton<JobSchedulerService>();

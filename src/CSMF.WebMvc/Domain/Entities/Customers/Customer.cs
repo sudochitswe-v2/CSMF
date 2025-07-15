@@ -17,6 +17,8 @@ namespace CSMF.WebMvc.Domain.Entities.Customers
 
         public int BranchId { get; set; } // Assuming Customer belongs to a Branch
 
+        public string Level { get; set; }
+
         // Navigation Properties
         public virtual Branch Branch { get; set; } // Assuming Customer belongs to a Branch
         public virtual ICollection<Document> Documents { get; set; } = new List<Document>();

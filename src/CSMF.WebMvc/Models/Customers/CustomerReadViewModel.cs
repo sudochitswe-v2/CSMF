@@ -14,6 +14,7 @@ namespace CSMF.WebMvc.Models.Customers
         public string Address { get; set; }
         public string IdentificationNumber { get; set; }
         public int BranchId { get; set; }
+        public string Level { get; set; }
 
         public virtual BranchReadViewModel Branch { get; set; }
     }

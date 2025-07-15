@@ -4,6 +4,7 @@ using CSMF.WebMvc.Models.Branches;
 using CSMF.WebMvc.Models.Customers;
 using CSMF.WebMvc.Models.Users;
 using CSMF.WebMvc.Services;
+using CSMF.WebMvc.Services.Customers;
 using CSMF.WebMvc.Services.Reports;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +14,8 @@ using System.Threading.Tasks;
 
 namespace CSMF.WebMvc.Controllers
 {
-    public class CustomersController(IHttpContextExtractorService httpExtractor, IReportService reportSvc, ApplicationDbContext dbContext) : Controller
+    public class CustomersController(IHttpContextExtractorService httpExtractor,
+        ICustomerService customerSvc, IReportService reportSvc, ApplicationDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Index(string search, int page = 1, int size = 10)
         {
@@ -78,6 +80,7 @@ namespace CSMF.WebMvc.Controllers
 
             // Map and save customer
             var customer = model.Adapt<Customer>();
+            customer.Level = nameof(DefinedCustomerLevel.Level0); // Default level
             customer.Create(User.Identity?.Name);
 
             dbContext.Customers.Add(customer);
@@ -170,7 +173,6 @@ namespace CSMF.WebMvc.Controllers
             {
                 return NotFound();
             }
-
             var model = customer.Adapt<CustomerUpdateViewModel>();
             await PopulateBranchesAsync(model);
 
@@ -198,6 +200,17 @@ namespace CSMF.WebMvc.Controllers
                 .FirstOrDefaultAsync(c => c.Id == model.Id);
 
             if (customer == null) return NotFound();
+
+            if (!customer.Level.Equals(nameof(DefinedCustomerLevel.Level0)))
+            {
+                var message = customerSvc.IsValidForSelectedLevel(customer.Id, model.Level);
+                if (!string.IsNullOrEmpty(message))
+                {
+                    ModelState.AddModelError(string.Empty, message);
+                    await PopulateBranchesAsync(model);
+                    return View(model);
+                }
+            }
 
             model.Adapt(customer); // Map updated values
             customer.UpdateModified(User.Identity?.Name);
