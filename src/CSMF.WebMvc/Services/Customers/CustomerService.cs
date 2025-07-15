@@ -7,6 +7,8 @@ namespace CSMF.WebMvc.Services.Customers
     public interface ICustomerService
     {
         string IsValidForSelectedLevel(int customerId, string level);
+        bool IsCustomerValidForLoan(int customerId, string levels);
+
 
     }
     public class CustomerService(ApplicationDbContext db) : ICustomerService
@@ -59,6 +61,16 @@ namespace CSMF.WebMvc.Services.Customers
             var isValid = VerifiedDocuments(customerId)
                   .Any(d => d.DocumentType == nameof(DefinedDocs.Collateral));
             return isValid ? string.Empty : "Customer must have verified Collateral for Level 3.";
+        }
+
+        public bool IsCustomerValidForLoan(int customerId, string levels)
+        {
+            var customer = db.Customers
+                .AsNoTracking()
+                .First(c => c.Id == customerId);
+            var eligableLevels = levels.Split(';');
+
+            return eligableLevels.Contains(customer.Level);
         }
     }
 }

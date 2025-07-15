@@ -1,10 +1,10 @@
 ﻿using CSMF.WebMvc.Data;
 using CSMF.WebMvc.Domain.Entities.LoanApplications;
 using CSMF.WebMvc.Models.LoanApplicationFees;
+using CSMF.WebMvc.Services.Customers;
 using CSMF.WebMvc.Services.LoanApplications;
 using CSMF.WebMvc.Services.RepaymentSchedules;
 using Mapster;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ using MySql.EntityFrameworkCore.Extensions;
 
 namespace CSMF.WebMvc.Controllers
 {
-    public class LoanApplicationsController(IRepaymentScheduleService scheduleSvc,
+    public class LoanApplicationsController(ICustomerService customerSvc, IRepaymentScheduleService scheduleSvc,
         ILoanFeeService feeSvc, ApplicationDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Index(string search, int page = 1, int size = 10)
@@ -81,12 +81,19 @@ namespace CSMF.WebMvc.Controllers
             };
             return View(model);
         }
+        private void ReprepareLoanCreateModel(LoanApplicationCreateViewModel model)
+        {
+            model.LoanProducts = GetLoans();
+            model.SelectedCustomer = GetCustomer(model.CustomerId);
+        }
         [HttpPost]
         public IActionResult Create(LoanApplicationCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.LoanProducts = GetLoans();
+                //model.LoanProducts = GetLoans();
+                //model.SelectedCustomer = GetCustomer(model.CustomerId);
+                ReprepareLoanCreateModel(model);
                 return View(model);
             }
 
@@ -96,15 +103,22 @@ namespace CSMF.WebMvc.Controllers
             if (loan is null)
             {
                 ModelState.AddModelError("LoanProductId", "Loan Product is not found");
-                model.LoanProducts = GetLoans();
+                ReprepareLoanCreateModel(model);
                 return View(model);
             }
             if (!(loan.MinPrincipalAmount <= model.PrincipalAmount) && !(loan.MaxPrincipalAmount <= model.PrincipalAmount))
             {
                 ModelState.AddModelError("PrincipalAmount", $"Principal Amount must be between {loan.MinPrincipalAmount} and {loan.MaxPrincipalAmount}");
-                model.LoanProducts = GetLoans();
+                ReprepareLoanCreateModel(model);
                 return View(model);
             }
+            if (!customerSvc.IsCustomerValidForLoan(model.CustomerId, loan.EligibleCustomerLevels))
+            {
+                ModelState.AddModelError("CustomerId", "Customer is not valid for this loan");
+                ReprepareLoanCreateModel(model);
+                return View(model);
+            }
+
 
             var application = model.Adapt<LoanApplication>();
             application.Create(User.Identity.Name);
@@ -173,6 +187,13 @@ namespace CSMF.WebMvc.Controllers
             return dbContext.LoanProducts
                 .ProjectToType<LoanReadViewModel>()
                 .ToList();
+        }
+        private CustomerReadViewModel? GetCustomer(int customerId)
+        {
+            return dbContext.Customers
+                    .AsNoTracking()
+                    .ProjectToType<CustomerReadViewModel>()
+                    .FirstOrDefault(c => c.Id == customerId);
         }
 
 

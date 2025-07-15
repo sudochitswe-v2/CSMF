@@ -28,7 +28,7 @@ namespace CSMF.WebMvc.Models.LoanApplications
         [Required(ErrorMessage = "Repayment cycle is required.")]
 
         public string RepaymentCycle { get; set; }
-        [Required(ErrorMessage = "Repayment day is required.")]
+        [Required(ErrorMessage = "Repayment day is required."), Range(1, 24, ErrorMessage = "Repayment day must be between 1 and 24.")]
         public int RepaymentDay { get; set; }
         public string? SelectedFeeIds { get; set; }
 

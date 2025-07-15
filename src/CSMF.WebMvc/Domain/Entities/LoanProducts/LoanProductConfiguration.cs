@@ -33,6 +33,10 @@ public class LoanProductConfiguration : IEntityTypeConfiguration<LoanProduct>
 
         builder.Property(e => e.GracePeriodDays).IsRequired(false);
 
+        builder.Property(e => e.EligibleCustomerLevels)
+               .IsRequired()
+               .HasMaxLength(225);
+
         builder.Property(c => c.CreatedOn).IsRequired().HasColumnType("datetime");
         builder.Property(c => c.CreatedBy).IsRequired().HasMaxLength(50);
         builder.Property(c => c.ModifiedOn).HasColumnType("datetime");

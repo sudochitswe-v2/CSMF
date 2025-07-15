@@ -18,16 +18,20 @@ namespace CSMF.WebMvc.Controllers
                 .ToList();
             return View(loans);
         }
+        private List<CheckboxItem> GetLevelCheckboxItems()
+        {
+            return Enum.GetNames(typeof(DefinedCustomerLevel))
+                .Select(level => new CheckboxItem
+                {
+                    Name = level,
+                    IsChecked = false
+                }).ToList();
+        }
         public IActionResult Create()
         {
             var model = new LoanCreateViewModel();
 
-            model.LevelItems = Enum.GetNames(typeof(DefinedCustomerLevel))
-            .Select(level => new CheckboxItem
-            {
-                Name = level,
-                IsChecked = false
-            }).ToList();
+            model.LevelItems = GetLevelCheckboxItems();
 
             return View(model);
         }
@@ -36,7 +40,7 @@ namespace CSMF.WebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(LoanCreateViewModel model)
         {
-            model.EligibleLevels = string.Join(";",
+            model.EligibleCustomerLevels = string.Join(";",
             model.LevelItems
                .Where(x => x.IsChecked)
                .Select(x => x.Name));
@@ -49,8 +53,6 @@ namespace CSMF.WebMvc.Controllers
             var loan = model.Adapt<LoanProduct>();
             loan.Create(User.Identity.Name);
             dbContext.LoanProducts.Add(loan);
-            //var loan = model.Adapt<LoanProduct>();
-            //dbContext.LoanProducts.Add(loan);
             dbContext.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
@@ -65,6 +67,12 @@ namespace CSMF.WebMvc.Controllers
                 return NotFound();
             }
             var model = loan.Adapt<LoanEditViewModel>();
+            model.LevelItems = GetLevelCheckboxItems();
+
+            var eligibleLevels = loan.EligibleCustomerLevels?.Split(';').ToList() ?? [];
+
+            model.LevelItems.ForEach(item => item.IsChecked = eligibleLevels.Contains(item.Name));
+
             return View(model);
         }
 
@@ -72,6 +80,11 @@ namespace CSMF.WebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, LoanEditViewModel model)
         {
+            model.EligibleCustomerLevels = string.Join(";",
+            model.LevelItems
+               .Where(x => x.IsChecked)
+               .Select(x => x.Name));
+
             if (!ModelState.IsValid)
             {
                 return View(model);

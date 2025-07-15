@@ -1,5 +1,6 @@
 ﻿using CSMF.WebMvc.Domain.Constants;
 using CSMF.WebMvc.Domain.Validations.Loans;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace CSMF.WebMvc.Models.Loans
@@ -12,6 +13,12 @@ namespace CSMF.WebMvc.Models.Loans
         [Required(ErrorMessage = "Product title is required.")]
         public string ProductTitle { get; set; }
         public string Description { get; set; } = string.Empty;
+
+        [Display(Name = "Eligible Levels")]
+
+        [ValidateNever]
+        public string EligibleCustomerLevels { get; set; } = "";
+        public List<CheckboxItem> LevelItems { get; set; } = new();
 
         [Required(ErrorMessage = "Principal amount is required.")]
         public decimal MinPrincipalAmount { get; set; }
@@ -60,10 +67,10 @@ namespace CSMF.WebMvc.Models.Loans
         public ICollection<string> PenaltyTypeOptions => [.. Enum.GetNames<DefinePenaltyTypes>()];
         [RequiredIfPenaltyEnabled(ErrorMessage = "Penalty type is required when late penalty is enabled.")]
         public string? PenaltyType { get; set; }
-        [RequiredIfPenaltyEnabled(ErrorMessage = "Penalty percentage is required when late penalty is enabled.")]
+        [RequiredIfPenaltyTypeIfPercentageBase(ErrorMessage = "Penalty percentage is required when late penalty is enabled.")]
         public decimal? PenaltyPercentage { get; set; }
 
-        [RequiredIfPenaltyEnabled(ErrorMessage = "Penalty fixed amount is required when late penalty is enabled.")]
+        [RequiredIfPenaltyTypeIsFixed(ErrorMessage = "Penalty fixed amount is required when late penalty is enabled.")]
         public decimal? PenaltyFixedAmount { get; set; }
 
         // Base for penalty calculation, e.g., "Principal", "Interest", "Total"

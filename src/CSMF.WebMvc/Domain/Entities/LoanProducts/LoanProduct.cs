@@ -45,6 +45,8 @@ namespace CSMF.WebMvc.Domain.Entities.LoanProducts
         // Type of recurring penalty, e.g., "Daily", "Weekly", "Monthly"
         public string? RecurringPenaltyType { get; set; }
 
+        public string EligibleCustomerLevels { get; set; }
+
         // Navigation Properties
         public virtual ICollection<LoanApplication> LoanApplications { get; set; } = new List<LoanApplication>();
     }

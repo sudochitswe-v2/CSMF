@@ -1,5 +1,6 @@
 ﻿using CSMF.WebMvc.Domain.Constants;
 using CSMF.WebMvc.Domain.Validations.Loans;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace CSMF.WebMvc.Models.Loans
@@ -11,8 +12,11 @@ namespace CSMF.WebMvc.Models.Loans
         public string Description { get; set; } = string.Empty;
 
         [Display(Name = "Eligible Levels")]
-        public string EligibleLevels { get; set; } = "";
+
+        [Required(ErrorMessage = "Eligible customer levels is required.")]
+        public string EligibleCustomerLevels { get; set; } = "";
         public List<CheckboxItem> LevelItems { get; set; } = new();
+
 
 
         [Required(ErrorMessage = "Principal amount is required.")]
