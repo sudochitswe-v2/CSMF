@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 .idea/
 .vs/
+
+*.pem
+appsettings.json
