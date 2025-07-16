@@ -51,8 +51,8 @@
                     <!-- Add Document Button -->
                     <div class="d-flex justify-content-between mb-3">
                         <h6>Documents</h6>
-                        <a asp-controller="Documents" asp-action="Create" asp-route-customerId="@Model.Id" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-plus-circle me-2"></i>Add Document
+                        <a asp-controller="Documents" asp-action="Create" asp-route-customerId="@Model.Id" class="btn btn-primary btn-sm">
+                            <i class="bi bi-folder-plus me-2"></i>Add Document
                         </a>
                     </div>
 
@@ -139,8 +139,8 @@
                 <div class="accordion-body">
                     <div class="d-flex justify-content-between mb-3">
                         <h6>Grantors</h6>
-                        <a asp-controller="Grantors" asp-action="Create" asp-route-customerId="@Model.Id" class="btn btn-outline-success btn-sm">
-                            <i class="bi bi-plus-circle me-2"></i>Add Grantor
+                        <a asp-controller="Grantors" asp-action="Create" asp-route-customerId="@Model.Id" class="btn btn-primary btn-sm">
+                            <i class="bi bi-person-add me-2"></i>Add Grantor
                         </a>
                     </div>
 
@@ -196,8 +196,8 @@
                 <div class="accordion-body">
                     <div class="d-flex justify-content-between mb-3">
                         <h6>Loan Applications</h6>
-                        <a asp-controller="LoanApplications" asp-action="Create" asp-route-customer="@Model.Id" class="btn btn-outline-success btn-sm">
-                            <i class="bi bi-plus-circle me-2"></i>Apply for Loan
+                        <a asp-controller="LoanApplications" asp-action="Create" asp-route-customer="@Model.Id" class="btn btn-primary btn-sm">
+                            <i class="bi bi-journal-plus me-2"></i>Apply for Loan
                         </a>
                     </div>
 

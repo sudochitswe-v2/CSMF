@@ -1,4 +1,5 @@
 ﻿@model ICollection<DelinquencyReportViewModel>
+@using CSMF.WebMvc.Extensions
 @{
     ViewBag.Title = "Delinquency Report";
 }
@@ -37,7 +38,9 @@
                 <td>@item.TotalAmount.ToString("N0")</td>
                 <td>@item.AmountPaid.ToString("N0")</td>
                 <td>@item.OutstandingAmount.ToString("N0")</td>
-                <td>@item.Status</td>
+                <td>
+                    <span class="badge @item.Status.ToPaymentStatusBootstrapClass()">@item.Status</span>
+                </td>
             </tr>
         }
     </tbody>

@@ -11,5 +11,6 @@ namespace CSMF.WebMvc.Models.Users
         public string LastName { get; set; }
         public string Email { get; set; }
         public string[] Roles { get; set; }
+        public string[] Branches { get; set; }
     }
 }

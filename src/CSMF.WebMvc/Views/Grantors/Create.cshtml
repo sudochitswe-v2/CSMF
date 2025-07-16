@@ -103,11 +103,11 @@
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-between mt-4">
-                            <a asp-action="Index" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left"></i> Back to List
+                            <a asp-controller="Customers" asp-action="Detail" asp-route-id="@Model.CustomerId" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Customer
                             </a>
                             <button type="submit" class="btn btn-success">
-                                <i class="bi bi-person-plus me-2"></i>Create
+                                <i class="bi bi-save"></i> Save Changes
                             </button>
                         </div>
 

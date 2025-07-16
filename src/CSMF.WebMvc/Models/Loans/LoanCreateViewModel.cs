@@ -13,7 +13,7 @@ namespace CSMF.WebMvc.Models.Loans
 
         [Display(Name = "Eligible Levels")]
 
-        [Required(ErrorMessage = "Eligible customer levels is required.")]
+        [ValidateNever]
         public string EligibleCustomerLevels { get; set; } = "";
         public List<CheckboxItem> LevelItems { get; set; } = new();
 
@@ -66,11 +66,10 @@ namespace CSMF.WebMvc.Models.Loans
         public ICollection<string> PenaltyTypeOptions => [.. Enum.GetNames<DefinePenaltyTypes>()];
         [RequiredIfPenaltyEnabled(ErrorMessage = "Penalty type is required when late penalty is enabled.")]
         public string? PenaltyType { get; set; }
-        //[RequiredIfPenaltyEnabled(ErrorMessage = "Penalty percentage is required when late penalty is enabled.")]
+        
         [RequiredIfPenaltyTypeIfPercentageBase(ErrorMessage = "Penalty percentage is required when penalty type is percentage based.")]
         public decimal? PenaltyPercentage { get; set; }
 
-        //[RequiredIfPenaltyEnabled(ErrorMessage = "Penalty fixed amount is required when late penalty is enabled.")]
         [RequiredIfPenaltyTypeIsFixed(ErrorMessage = "Penalty fixed amount is required when penalty type is fixed.")]
         public decimal? PenaltyFixedAmount { get; set; }
 

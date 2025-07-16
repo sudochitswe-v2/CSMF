@@ -2,6 +2,11 @@
 @{
     ViewBag.Title = $"Loan Statement for {Model.Customer.FullName}";
 }
+<div class="mb-4">
+    <a asp-controller="Customers" asp-action="Detail" asp-route-id="@Model.Customer.Id" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-2"></i>Back to Customer
+    </a>
+</div>
 
 @foreach (var loan in Model.LoanStatements)
 {

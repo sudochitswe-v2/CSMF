@@ -26,11 +26,20 @@ namespace CSMF.WebMvc.Controllers
             var systemUsers = await userManager.Users.ToListAsync();
             var users = systemUsers.Adapt<List<UserReadViewModel>>();
 
+
             var userRolesMap = new Dictionary<string, string[]>();
+            var userBranchesMap = new Dictionary<string, string[]>();
 
             foreach (var user in systemUsers)
             {
                 var roles = await userManager.GetRolesAsync(user);
+                var branches = await dbContext.BranchUsers
+                    .Include(bu => bu.Branch)
+                    .AsNoTracking()
+                    .Where(b => b.UserId == user.Id)
+                    .Select(b => b.Branch.Name)
+                    .ToArrayAsync();
+                userBranchesMap[user.Id] = branches;
                 userRolesMap[user.Id] = roles.ToArray();
             }
 
@@ -40,6 +49,10 @@ namespace CSMF.WebMvc.Controllers
                 if (userRolesMap.TryGetValue(userId, out var roles))
                 {
                     user.Roles = roles;
+                }
+                if (userBranchesMap.TryGetValue(userId, out var branches))
+                {
+                    user.Branches = branches;
                 }
             }
 

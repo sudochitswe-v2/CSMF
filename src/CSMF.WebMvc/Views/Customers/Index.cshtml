@@ -14,8 +14,8 @@
         </div>
     </form>
 
-    <a asp-action="Create" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> New
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-person-add"></i> New
     </a>
 
     <!-- Page Size Dropdown -->
@@ -43,6 +43,7 @@
             <th>Address</th>
             <th>Branch</th>
             <th>Level</th>
+            <th>Created By</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -68,24 +69,46 @@
                         </span>
                     </td>
                     <td>
-                        <a asp-action="Detail" asp-route-id="@customer.Id" class="btn btn-sm btn-outline-success me-2">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        <a asp-action="Edit" asp-route-id="@customer.Id" class="btn btn-sm btn-outline-primary me-2">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <form id="delete-form-@customer.Id" asp-action="Delete" asp-route-id="@customer.Id" method="post" class="d-inline me-2">
-                            <button type="button" class="btn btn-sm btn-outline-danger"
-                                    onclick="confirmDelete('@customer.Id')">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
-                        <a asp-controller="Reports" asp-action="CustomerLoanStatements" asp-route-id="@customer.Id" class="btn btn-sm btn-outline-info me-2">
-                            <i class="bi bi-file-earmark-spreadsheet-fill"></i>
-                            Statements
-                        </a>
-
+                        @customer.CreatedBy
                     </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                    id="actionsDropdown-@customer.Id" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="actionsDropdown-@customer.Id">
+                                <li>
+                                    <a class="dropdown-item text-success" asp-action="Detail" asp-route-id="@customer.Id">
+                                        <i class="bi bi-eye me-2"></i>View
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-primary" asp-action="Edit" asp-route-id="@customer.Id">
+                                        <i class="bi bi-pencil-square me-2"></i>Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-info" asp-controller="Reports"
+                                       asp-action="CustomerLoanStatements" asp-route-id="@customer.Id">
+                                        <i class="bi bi-file-earmark-spreadsheet-fill me-2"></i>Statements
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form id="delete-form-@customer.Id" asp-action="Delete"
+                                          asp-route-id="@customer.Id" method="post">
+                                        <button type="button" class="dropdown-item text-danger"
+                                                onclick="confirmDelete('@customer.Id')">
+                                            <i class="bi bi-trash me-2"></i>Delete
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+
                 </tr>
             }
         }

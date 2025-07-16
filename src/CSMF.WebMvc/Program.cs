@@ -59,30 +59,30 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCarter();
 
 // Add Hangfire services
-if (builder.Environment.IsDevelopment())
+//if (builder.Environment.IsDevelopment())
+//{
+//    builder.Services.AddHangfire(config =>
+//        config.UseMemoryStorage());
+//}
+//else
+//{
+var options =
+new MySqlStorageOptions
 {
-    builder.Services.AddHangfire(config =>
-        config.UseMemoryStorage());
-}
-else
-{
-    var options =
-    new MySqlStorageOptions
-    {
-        TransactionIsolationLevel = IsolationLevel.ReadCommitted,
-        QueuePollInterval = TimeSpan.FromSeconds(15),
-        JobExpirationCheckInterval = TimeSpan.FromHours(1),
-        CountersAggregateInterval = TimeSpan.FromMinutes(5),
-        PrepareSchemaIfNecessary = true,
-        DashboardJobListLimit = 50000,
-        TransactionTimeout = TimeSpan.FromMinutes(1),
-        TablesPrefix = "z_hangfire_",
-    };
-    var storage = new MySqlStorage(hangfireConnectionString, options);
+    TransactionIsolationLevel = IsolationLevel.ReadCommitted,
+    QueuePollInterval = TimeSpan.FromSeconds(15),
+    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+    PrepareSchemaIfNecessary = true,
+    DashboardJobListLimit = 50000,
+    TransactionTimeout = TimeSpan.FromMinutes(1),
+    TablesPrefix = "z_hangfire_",
+};
+var storage = new MySqlStorage(hangfireConnectionString, options);
 
-    builder.Services.AddHangfire(config => config.UseStorage(storage));
+builder.Services.AddHangfire(config => config.UseStorage(storage));
 
-}
+//}
 
 
 // Add Hangfire server

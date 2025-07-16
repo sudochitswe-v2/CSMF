@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-2"></i>New Loan Fee
+            <i class="bi bi-cash-stack me-2"></i>New Loan Fee
         </a>
     </div>
 
@@ -34,7 +34,7 @@
                         }
                         else
                         {
-                            <td>@item.FeeAmount</td>
+                            <td>@item.FeeAmount.ToString("N0")</td>
                         }
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-2">

@@ -15,8 +15,8 @@
             </div>
         </form>
 
-        <a asp-action="Create" class="btn btn-success">
-            <i class="bi bi-plus-circle me-2"></i>New Application
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-journal-plus me-2"></i>New Application
         </a>
     </div>
 
@@ -47,7 +47,8 @@
                         <th>Status</th>
                         <th>Principal</th>
                         <th>Release Date</th>
-                        <th>Actions</th>
+                        <th>Created By</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -70,11 +71,12 @@
                             </td>
                             <td>@loan.PrincipalAmount.ToString("N0")</td>
                             <td>@loan.ReleaseDate.ToString("dd/MMMM/yyyy")</td>
+                            <td>@loan.CreatedBy</td>
 
                             <td class="text-end">
                                 <!-- Details Button -->
                                 <a asp-action="Detail" asp-route-id="@loan.Id"
-                                   class="btn btn-sm btn-outline-info me-2"
+                                   class="btn btn-sm btn-outline-success me-2"
                                    title="View Details">
                                     <i class="bi bi-eye"></i>
                                 </a>
