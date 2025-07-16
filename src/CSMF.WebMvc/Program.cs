@@ -84,10 +84,6 @@ builder.Services.AddHangfire(config => config.UseStorage(storage));
 
 //}
 
-
-// Add Hangfire server
-builder.Services.AddHangfireServer();
-
 builder.Services.AddScoped<IHttpContextExtractorService, HttpContextExtractorService>();
 builder.Services.AddScoped<ILoanFeeService, LoanFeeService>();
 builder.Services.AddScoped<IRepaymentScheduleService, RepaymentScheduleService>();
