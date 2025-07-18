@@ -82,6 +82,8 @@ var storage = new MySqlStorage(hangfireConnectionString, options);
 
 builder.Services.AddHangfire(config => config.UseStorage(storage));
 
+builder.Services.AddHangfireServer();
+
 //}
 
 builder.Services.AddScoped<IHttpContextExtractorService, HttpContextExtractorService>();
@@ -126,8 +128,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapCarter();
-
-// Schedule jobs
-app.Services.GetRequiredService<JobSchedulerService>().ScheduleJobs();
 
 app.RunAsync().Wait();
