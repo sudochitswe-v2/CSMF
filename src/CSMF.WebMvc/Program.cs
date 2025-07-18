@@ -129,4 +129,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapCarter();
 
+// Schedule jobs
+app.Services.GetRequiredService<JobSchedulerService>().ScheduleJobs();
+
 app.RunAsync().Wait();

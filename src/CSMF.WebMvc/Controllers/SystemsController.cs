@@ -94,23 +94,29 @@ namespace CSMF.WebMvc.Controllers
         {
             // Return a page that opens Hangfire in new tab AND redirects back
             return Content(@"
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <script>
-                // Open Hangfire in new tab
-                window.open('/hangfire', '_blank');
-                
-                // Redirect back after a slight delay (500ms)
-                setTimeout(function() {
-                    window.history.back();
-                }, 500);
-            </script>
-        </head>
-        <body>
-            <p>Opening Hangfire Dashboard... You will be redirected back shortly.</p>
-        </body>
-        </html>
+       <!DOCTYPE html>
+<html>
+<head>
+    <title>Opening Hangfire</title>
+    <script>
+        window.onload = function() {
+            // Open Hangfire in new tab
+            var newWindow = window.open('/hangfire', '_blank');
+            
+            // Redirect back after checking if open succeeded
+            setTimeout(function() {
+                if (!newWindow || newWindow.closed) {
+                    alert('Popup was blocked. Please allow popups for this site.');
+                }
+                window.history.back();
+            }, 500);
+        };
+    </script>
+</head>
+<body>
+    <p>Opening Hangfire dashboard...</p>
+</body>
+</html>
     ", "text/html");
         }
 
