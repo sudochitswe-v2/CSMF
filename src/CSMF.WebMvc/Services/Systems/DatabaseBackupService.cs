@@ -99,7 +99,7 @@ public class DatabaseBackupService : IDatabaseBackupService
 
     public async Task<bool> RestoreBackupAsync(string backupFileName)
     {
-        var connectionString = _config.GetConnectionString("DefaultConnection");
+        var connectionString = _config.GetConnectionString("MySql");
         var dbName = GetDatabaseName(connectionString);
         var backupPath = Path.Combine(_backupDir, backupFileName);
 
@@ -119,10 +119,12 @@ public class DatabaseBackupService : IDatabaseBackupService
             // First drop all tables (clean restore)
             await DropAllTables(connectionString);
 
+            var name = _config.GetValue<string>("DumpExe");
+
             // Restore using mysql command line
             var processInfo = new ProcessStartInfo
             {
-                FileName = "mysql",
+                FileName = name,
                 Arguments = $"--host={server} --user={userId} --password={password} {dbName} < \"{backupPath}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true,

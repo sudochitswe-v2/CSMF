@@ -19,7 +19,7 @@ namespace CSMF.WebMvc.Controllers
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            ViewData["returnUrl"] = returnUrl;
             return View();
         }
 

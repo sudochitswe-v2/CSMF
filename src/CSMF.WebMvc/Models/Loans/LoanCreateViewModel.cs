@@ -9,6 +9,7 @@ namespace CSMF.WebMvc.Models.Loans
     {
         [Required(ErrorMessage = "Product title is required.")]
         public string ProductTitle { get; set; }
+        [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; } = string.Empty;
 
         [Display(Name = "Eligible Levels")]

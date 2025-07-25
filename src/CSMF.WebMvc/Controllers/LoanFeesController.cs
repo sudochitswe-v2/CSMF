@@ -38,7 +38,18 @@ namespace CSMF.WebMvc.Controllers
             {
                 return View(model);
             }
+            if (model.FeeType.Equals(nameof(DefinedLoanFeeTypes.FixedAmount))&& model.FeeAmount is 0)
+            {
+                ModelState.AddModelError("FeeAmount", "Fee amount is required");
 
+                return View(model);
+            }
+            if (model.FeeType.Equals(nameof(DefinedLoanFeeTypes.PercentageOnPrincipal)) && model.FeePercentage is 0)
+            {
+                ModelState.AddModelError("FeePercentage", "Fee percentage is required");
+
+                return View(model);
+            }
             var fee = model.Adapt<LoanFee>();
             fee.Create(User.Identity?.Name);
 
@@ -73,7 +84,18 @@ namespace CSMF.WebMvc.Controllers
             {
                 return View(model);
             }
+            if (model.FeeType.Equals(nameof(DefinedLoanFeeTypes.FixedAmount)) && model.FeeAmount is 0)
+            {
+                ModelState.AddModelError("FeeAmount", "Fee amount is required");
 
+                return View(model);
+            }
+            if (model.FeeType.Equals(nameof(DefinedLoanFeeTypes.PercentageOnPrincipal)) && model.FeePercentage is 0)
+            {
+                ModelState.AddModelError("FeePercentage", "Fee percentage is required");
+
+                return View(model);
+            }
             var fee = await _context.LoanFees.FirstOrDefaultAsync(f => f.Id == id);
             if (fee == null)
             {

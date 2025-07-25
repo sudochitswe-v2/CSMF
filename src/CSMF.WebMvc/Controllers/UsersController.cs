@@ -91,6 +91,14 @@ namespace CSMF.WebMvc.Controllers
                 return View(model);
             }
 
+            if (model.SelectedBranches.Length == 0)
+            {
+                ModelState.AddModelError("SelectedBranches", "At least one branch must be selected");
+                model.Roles = await GetRolesAsync();
+                model.Branches = await GetBranchesAsync();
+                return View(model);
+            }
+
 
             var user = new SystemUser
             {

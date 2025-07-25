@@ -1,39 +1,5 @@
 ﻿@model CSMF.WebMvc.Models.Account.LoginViewModel
 
-@* @{ *@
-@*     ViewData["Title"] = "Login"; *@
-@* } *@
-
-@* <h1>Login</h1> *@
-
-@* <h4>LoginViewModel</h4> *@
-@* <hr /> *@
-@* <div class="row"> *@
-@*     <div class="col-md-4"> *@
-@*         <form asp-action="Login"> *@
-@*             <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="Username" class="control-label"></label> *@
-@*                 <input asp-for="Username" class="form-control" /> *@
-@*                 <span asp-validation-for="Username" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <label asp-for="Password" class="control-label"></label> *@
-@*                 <input asp-for="Password" class="form-control" /> *@
-@*                 <span asp-validation-for="Password" class="text-danger"></span> *@
-@*             </div> *@
-@*             <div class="form-group form-check"> *@
-@*                 <label class="form-check-label"> *@
-@*                     <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe) *@
-@*                 </label> *@
-@*             </div> *@
-@*             <div class="form-group"> *@
-@*                 <input type="submit" value="Create" class="btn btn-primary" /> *@
-@*             </div> *@
-@*         </form> *@
-@*     </div> *@
-@* </div> *@
-
 @{
     ViewBag.Title = "Login";
     Layout = "~/Views/Shared/_MinimalLayout.cshtml"; // Or use a minimal layout like _LoginLayout.cshtml
@@ -55,6 +21,7 @@
             }
 
             <form asp-action="Login" method="post" novalidate>
+                <input type="hidden" name="returnUrl" value="@Context.Request.Query["ReturnUrl"]" />
 
                 <div class="mb-3">
                     <label asp-for="Email" class="form-label"></label>
