@@ -1,4 +1,6 @@
 ﻿using CSMF.WebMvc.Services.RepaymentTransactions;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +9,8 @@ namespace CSMF.WebMvc.Controllers
     public class RepaymentsController(IRepaymentTransactionService trxSvc, IScheduleValidatorService scheduleValidator, ApplicationDbContext db) : Controller
     {
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.LoanOfficer))]
         public IActionResult Create(int loanApplicationId, int? scheduleId)
         {
             if (loanApplicationId <= 0)

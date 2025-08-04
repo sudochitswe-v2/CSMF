@@ -3,6 +3,8 @@ using CSMF.WebMvc.Domain.Entities.Grantors;
 using CSMF.WebMvc.Models.Documents;
 using CSMF.WebMvc.Models.Grantors;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +13,8 @@ namespace CSMF.WebMvc.Controllers
     public class GrantorsController(ApplicationDbContext dbContext) : Controller
     {
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.LoanOfficer) + "," + nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Create(int customerId)
         {
             var customser = await GetCustomerData(customerId);
@@ -65,6 +69,8 @@ namespace CSMF.WebMvc.Controllers
         }
         [Route("[controller]/[action]/{id?}")]
         [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.LoanOfficer) + "," + nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Delete(int id)
         {
             var grantor = await dbContext.Grantors

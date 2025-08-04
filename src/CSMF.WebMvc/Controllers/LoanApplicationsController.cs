@@ -1,6 +1,7 @@
 ﻿using CSMF.WebMvc.Data;
 using CSMF.WebMvc.Domain.Entities.LoanApplications;
 using CSMF.WebMvc.Models.LoanApplicationFees;
+using CSMF.WebMvc.Services;
 using CSMF.WebMvc.Services.Customers;
 using CSMF.WebMvc.Services.LoanApplications;
 using CSMF.WebMvc.Services.RepaymentSchedules;
@@ -14,14 +15,16 @@ using MySql.EntityFrameworkCore.Extensions;
 namespace CSMF.WebMvc.Controllers
 {
     public class LoanApplicationsController(ICustomerService customerSvc, IRepaymentScheduleService scheduleSvc,
-        ILoanFeeService feeSvc, ApplicationDbContext dbContext) : Controller
+        ILoanFeeService feeSvc, IHttpContextExtractorService httpContextExtractor, ApplicationDbContext dbContext) : Controller
     {
         public async Task<IActionResult> Index(string search, int page = 1, int size = 10)
         {
+
+            var branchIds = httpContextExtractor.GetBranchIdFromUserClaims();
+
             var query = dbContext.LoanApplications
                 .AsNoTracking()
-                .Include(l => l.Customer)
-                .ProjectToType<LoanApplicationReadViewModel>()
+                .Include(l => l.Customer)  // Only needed if not using ProjectToType's automatic inclusion
                 .OrderBy(l => l.ReleaseDate)
                 .AsQueryable();
 
@@ -30,14 +33,20 @@ namespace CSMF.WebMvc.Controllers
                 query = query.Where(l =>
                     EF.Functions.Like(l.Customer.FirstName, $"%{search}%") ||
                     EF.Functions.Like(l.Customer.LastName, $"%{search}%") ||
-                    EF.Functions.Like(l.Id, $"%{search}%"));
+                    EF.Functions.Like(l.Id.ToString(), $"%{search}%"));  // Assuming Id is numeric
             }
 
+            if (branchIds != null && branchIds.Count != 0)
+            {
+                query = query.Where(l => branchIds.Contains(l.Customer.BranchId));  // Assuming BranchId is on Customer
+            }
+
+            var projectedQuery = query.ProjectToType<LoanApplicationReadViewModel>();
+
             var pageResult = await PaginatedSearchResult<LoanApplicationReadViewModel>.PaginatedQueryAsync(
-                query, page, size);
+                projectedQuery, page, size);
 
             pageResult.SearchTerm = search;
-
 
             return View(pageResult);
         }
@@ -54,6 +63,7 @@ namespace CSMF.WebMvc.Controllers
                 .ToList();
             return View(pendingLoans);
         }
+
 
         public IActionResult Create([FromQuery] int customer)
         {
@@ -264,6 +274,8 @@ namespace CSMF.WebMvc.Controllers
             return View(loanApp);
         }
         [HttpPost]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Delete(int id)
         {
             var loan = dbContext.LoanApplications

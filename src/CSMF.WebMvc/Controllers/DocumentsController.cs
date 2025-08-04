@@ -2,6 +2,8 @@
 using CSMF.WebMvc.Domain.Entities.Documents;
 using CSMF.WebMvc.Models.Documents;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +18,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.LoanOfficer) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Create(int customerId)
         {
             var customser = GetCustomerData(customerId).Result;
@@ -110,6 +114,8 @@ namespace CSMF.WebMvc.Controllers
         }
         [Route("[controller]/[action]/{id?}")]
         [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.LoanOfficer) + "," + nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Delete(int id)
         {
             var document = await dbContext.Documents
@@ -129,6 +135,8 @@ namespace CSMF.WebMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Verified(int id)
         {
             var document = await dbContext.Documents

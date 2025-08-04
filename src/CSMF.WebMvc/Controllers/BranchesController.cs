@@ -2,6 +2,8 @@
 using CSMF.WebMvc.Domain.Entities.Branches;
 using CSMF.WebMvc.Models.Branches;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Create()
         {
             return View();
@@ -43,6 +47,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Edit(int id)
         {
             var branch = dbContext.Branches
@@ -80,6 +86,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Delete(int id)
         {
             var branch = dbContext.Branches

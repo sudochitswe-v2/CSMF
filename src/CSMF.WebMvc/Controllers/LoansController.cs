@@ -1,6 +1,7 @@
 using CSMF.WebMvc.Data;
 using CSMF.WebMvc.Domain.Entities.LoanProducts;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,9 @@ namespace CSMF.WebMvc.Controllers
                     IsChecked = false
                 }).ToList();
         }
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Create()
         {
             var model = new LoanCreateViewModel();
@@ -56,7 +60,9 @@ namespace CSMF.WebMvc.Controllers
             dbContext.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
-
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Edit(int id)
         {
             var loan = dbContext.LoanProducts
@@ -104,6 +110,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Delete(int id)
         {
             var loan = dbContext.LoanProducts

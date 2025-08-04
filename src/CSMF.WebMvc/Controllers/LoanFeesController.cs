@@ -1,5 +1,7 @@
 using CSMF.WebMvc.Domain.Entities.LoanFees;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +25,8 @@ namespace CSMF.WebMvc.Controllers
 
         // GET: /LoanFees/Create
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Create()
         {
             var viewModel = new LoanFeeCreateViewModel();
@@ -38,7 +42,7 @@ namespace CSMF.WebMvc.Controllers
             {
                 return View(model);
             }
-            if (model.FeeType.Equals(nameof(DefinedLoanFeeTypes.FixedAmount))&& model.FeeAmount is 0)
+            if (model.FeeType.Equals(nameof(DefinedLoanFeeTypes.FixedAmount)) && model.FeeAmount is 0)
             {
                 ModelState.AddModelError("FeeAmount", "Fee amount is required");
 
@@ -60,6 +64,8 @@ namespace CSMF.WebMvc.Controllers
 
         // GET: /LoanFees/Edit/5
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Edit(int id)
         {
             var fee = await _context.LoanFees
@@ -114,6 +120,8 @@ namespace CSMF.WebMvc.Controllers
         // POST: /LoanFees/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Manager) + "," + nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Delete(int id)
         {
             var fee = await _context.LoanFees.FindAsync(id);

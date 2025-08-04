@@ -32,7 +32,7 @@
             {
                 nameof(DefinedCustomerLevel.Level0) => "bg-secondary",
                 nameof(DefinedCustomerLevel.Level1) => "bg-info",
-                nameof(DefinedCustomerLevel.Level2) => "bg-secondary",
+                nameof(DefinedCustomerLevel.Level2) => "bg-primary",
                 nameof(DefinedCustomerLevel.Level3) => "bg-success",
                 _ => "bg-light" // default case
             };

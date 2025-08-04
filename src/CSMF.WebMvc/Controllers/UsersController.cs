@@ -59,6 +59,9 @@ namespace CSMF.WebMvc.Controllers
             return View(users);
         }
 
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Create()
         {
             var roles = await GetRolesAsync();

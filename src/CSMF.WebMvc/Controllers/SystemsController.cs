@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSMF.WebMvc.Controllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = nameof(DefinedRole.Administrator))]
     public class SystemsController(
         IDatabaseBackupService backupService,
         ILogger<SystemsController> logger) : Controller
     {
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Backups()
         {
             var backups = await backupService.GetBackupsAsync();
@@ -16,6 +17,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> CreateBackup()
         {
             try
@@ -32,6 +35,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> RestoreBackup(string backupFileName)
         {
             try
@@ -73,6 +78,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.Administrator))]
         public IActionResult DeleteBackup(string backupFileName)
         {
             var backupPath = Path.Combine(Directory.GetCurrentDirectory(), "DatabaseBackups", backupFileName);

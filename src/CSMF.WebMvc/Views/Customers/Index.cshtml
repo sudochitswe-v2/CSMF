@@ -100,7 +100,7 @@
                                     <form id="delete-form-@customer.Id" asp-action="Delete"
                                           asp-route-id="@customer.Id" method="post">
                                         <button type="button" class="dropdown-item text-danger"
-                                                onclick="confirmDelete('@customer.Id')">
+                                                onclick="confirmDelete('@customer.Id','@customer.FullName')">
                                             <i class="bi bi-trash me-2"></i>Delete
                                         </button>
                                     </form>

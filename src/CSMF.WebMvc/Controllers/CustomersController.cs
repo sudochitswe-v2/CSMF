@@ -1,16 +1,12 @@
-﻿using CSMF.WebMvc.Data;
-using CSMF.WebMvc.Domain.Entities.Customers;
-using CSMF.WebMvc.Models.Branches;
-using CSMF.WebMvc.Models.Customers;
-using CSMF.WebMvc.Models.Users;
+﻿using CSMF.WebMvc.Domain.Entities.Customers;
 using CSMF.WebMvc.Services;
 using CSMF.WebMvc.Services.Customers;
 using CSMF.WebMvc.Services.Reports;
 using Mapster;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace CSMF.WebMvc.Controllers
 {
@@ -32,9 +28,9 @@ namespace CSMF.WebMvc.Controllers
                 query = query.Where(l =>
                     EF.Functions.Like(l.FirstName, $"%{search}%") ||
                     EF.Functions.Like(l.LastName, $"%{search}%") ||
-                    EF.Functions.Like(l.IdentificationNumber, $"%{search}%")
-                    && branches.Contains(l.BranchId));
+                    EF.Functions.Like(l.IdentificationNumber, $"%{search}%"));
             }
+            query = query.Where(l => branches.Contains(l.BranchId));
 
             var pageResult = await PaginatedSearchResult<CustomerReadViewModel>.PaginatedQueryAsync(
                 query, page, size);
@@ -44,7 +40,8 @@ namespace CSMF.WebMvc.Controllers
 
             return View(pageResult);
         }
-
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.LoanOfficer) + "," + nameof(DefinedRole.Administrator))]
         public IActionResult Create()
         {
             var branches = dbContext.Branches
@@ -160,6 +157,8 @@ namespace CSMF.WebMvc.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
+            Roles = nameof(DefinedRole.LoanOfficer) + "," + nameof(DefinedRole.Administrator))]
         public async Task<IActionResult> Edit(int id)
         {
             var branches = httpExtractor.GetBranchIdFromUserClaims();

@@ -18,5 +18,6 @@ public class LoanApplicationReadViewModel
     public int RepaymentDay { get; set; }
     public DateTime CreatedOn { get; set; }
     public string CreatedBy { get; set; }
+    public int BranchId => Customer.BranchId;
     public virtual CustomerReadViewModel Customer { get; set; }
 }

@@ -2,18 +2,14 @@ using CSMF.WebMvc.Domain.Entities.Customers;
 using CSMF.WebMvc.Domain.Entities.LoanApplications;
 using CSMF.WebMvc.Domain.Entities.RepaymentSchedules;
 using CSMF.WebMvc.Domain.Entities.RepaymentTransactions;
-using CSMF.WebMvc.Models;
-using CSMF.WebMvc.Models.Dashboard;
-using DocumentFormat.OpenXml.InkML;
+using CSMF.WebMvc.Services;
 using Mapster;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace CSMF.WebMvc.Controllers
 {
-    public class HomeController(ApplicationDbContext db, ILogger<HomeController> logger) : Controller
+    public class HomeController(ApplicationDbContext db, IHttpContextExtractorService httpContextExtractor, ILogger<HomeController> logger) : Controller
     {
 
         public async Task<IActionResult> Index(int? branchId)
@@ -23,9 +19,11 @@ namespace CSMF.WebMvc.Controllers
 
             IQueryable<LoanApplication> query = db.LoanApplications.AsNoTracking();
 
+            var branchIds = httpContextExtractor.GetBranchIdFromUserClaims();
             // Get all branches for dropdown
             var branches = await db.Branches
                 .ProjectToType<BranchReadViewModel>()
+                .Where(b => branchIds.Contains(b.Id))
                 .ToListAsync();
 
             IQueryable<LoanApplication> loanQuery = db.LoanApplications.AsNoTracking()
