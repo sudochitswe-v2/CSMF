@@ -232,8 +232,8 @@ Navigate to: `https://localhost:7001`
 
 ## ✅ License
 
-This project is for educational and demonstration purposes only.  
-No commercial use without permission.
+This project is licensed under the Apache License, Version 2.0.
+You may freely use, modify, and distribute the software in accordance with the terms of this license.
 
 > © 2025 CSMF  
 > Developed as part of a software engineering project.
