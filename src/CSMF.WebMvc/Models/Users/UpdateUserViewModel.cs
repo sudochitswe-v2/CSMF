@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CSMF.WebMvc.Models.Users
 {
-    public class UpdateCreateViewModel
+    public class UserUpdateViewModel
     {
         [Required(ErrorMessage = "Id is required")]
         [Display(Name = "Id")]

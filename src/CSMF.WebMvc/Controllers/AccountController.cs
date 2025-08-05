@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using CSMF.WebMvc.Data;
+using CSMF.WebMvc.Domain.Entities.Users;
 using CSMF.WebMvc.Models.Account;
+using CSMF.WebMvc.Models.Branches;
+using CSMF.WebMvc.Models.Users;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using CSMF.WebMvc.Domain.Entities.Users;
-using CSMF.WebMvc.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
-using CSMF.WebMvc.Models.Branches;
 
 namespace CSMF.WebMvc.Controllers
 {
@@ -51,6 +52,7 @@ namespace CSMF.WebMvc.Controllers
 
             var claims = new List<Claim>
             {
+                new ("ID", user.Id),
                 new (ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
                 new (ClaimTypes.Email, user.Email),
             };
@@ -111,6 +113,69 @@ namespace CSMF.WebMvc.Controllers
                 IsAuthenticated = User.Identity?.IsAuthenticated,
                 Roles = roles
             });
+        }
+
+        [Authorize]
+        [HttpGet("Account/ChangePassword/{id}")]
+        public async Task<IActionResult> ChangePassword(string id)
+        {
+
+            var user = await userManager.FindByIdAsync(id);
+            var claims = User.Claims;
+
+            if (!User.IsInRole(nameof(DefinedRole.Administrator)))
+            {
+                return RedirectToPage("AccessDenied");
+            }
+
+            if (user == null) return NotFound();
+            var viewModel = new PasswordResetViewModel
+            {
+                Id = user.Id.ToString(),
+            };
+            return View(viewModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(PasswordResetViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await userManager.FindByIdAsync(model.Id.ToString());
+            if (user == null) return NotFound();
+
+            // Update basic info
+
+            user.PasswordHash = userManager.PasswordHasher.HashPassword(user, model.Password);
+
+            var updateResult = await userManager.UpdateAsync(user);
+
+            if (updateResult.Succeeded)
+            {
+                if (user.Id.Equals(User.FindFirst("ID").Value))
+                {
+                    await Logout();
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Users");
+                }
+            }
+            else
+            {
+                foreach (var error in updateResult.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View(model);
+            }
+
+            return RedirectToAction("Index", "Users");
         }
     }
 }

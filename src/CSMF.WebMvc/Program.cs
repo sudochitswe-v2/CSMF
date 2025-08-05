@@ -105,6 +105,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.SeedIdentityAsync(builder.Services).Wait();
+    app.UseExceptionHandler("/Error/InternalServerError");
 }
 else
 {

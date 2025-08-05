@@ -20,11 +20,20 @@ namespace CSMF.WebMvc.Controllers
             IQueryable<LoanApplication> query = db.LoanApplications.AsNoTracking();
 
             var branchIds = httpContextExtractor.GetBranchIdFromUserClaims();
-            // Get all branches for dropdown
-            var branches = await db.Branches
-                .ProjectToType<BranchReadViewModel>()
-                .Where(b => branchIds.Contains(b.Id))
-                .ToListAsync();
+
+            if (User.IsInRole(nameof(DefinedRole.Administrator)))
+            {
+                branchId = branchId ?? 0;
+            }
+            else
+            {
+                branchId = branchId ?? branchIds.FirstOrDefault();
+            }
+                // Get all branches for dropdown
+                var branches = await db.Branches
+                    .ProjectToType<BranchReadViewModel>()
+                    .Where(b => branchIds.Contains(b.Id))
+                    .ToListAsync();
 
             IQueryable<LoanApplication> loanQuery = db.LoanApplications.AsNoTracking()
                 .Include(la => la.Customer);

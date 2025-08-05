@@ -16,7 +16,7 @@ namespace CSMF.WebMvc.Services.LoanApplications
         {
             var feeIdsArray = string.IsNullOrEmpty(feeIds) ?
                 Array.Empty<int>() :
-                feeIds.Split(',').Select(int.Parse).ToArray();
+                feeIds.Split(';').Select(int.Parse).ToArray();
 
             var fees = db.LoanFees
                 .AsNoTracking()

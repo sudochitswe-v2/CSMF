@@ -191,7 +191,7 @@ namespace CSMF.WebMvc.Controllers
                 .Select(b => b.BranchId)
                 .ToArrayAsync();
 
-            var viewModel = new UpdateCreateViewModel
+            var viewModel = new UserUpdateViewModel
             {
                 Id = id,
                 FirstName = user.FirstName,
@@ -207,7 +207,7 @@ namespace CSMF.WebMvc.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateCreateViewModel model)
+        public async Task<IActionResult> Edit(UserUpdateViewModel model)
         {
             if (!ModelState.IsValid)
             {

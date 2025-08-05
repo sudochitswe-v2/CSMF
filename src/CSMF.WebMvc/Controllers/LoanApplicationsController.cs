@@ -55,11 +55,12 @@ namespace CSMF.WebMvc.Controllers
             Roles = nameof(DefinedRole.Manager))]
         public IActionResult Requests()
         {
+            var branches = httpContextExtractor.GetBranchIdFromUserClaims();
             var pendingLoans = dbContext.LoanApplications
                 .AsNoTracking()
                 .Include(l => l.Customer)
                 .ProjectToType<LoanApplicationReadViewModel>()
-                .Where(l => l.Status == nameof(DefinedLoanApplicationStatus.Requested))
+                .Where(l => l.Status == nameof(DefinedLoanApplicationStatus.Requested) && branches.Contains(l.Customer.BranchId))
                 .ToList();
             return View(pendingLoans);
         }
@@ -189,7 +190,7 @@ namespace CSMF.WebMvc.Controllers
 
             dbContext.SaveChanges(); // Save everything in one transaction
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Requests));
         }
 
         private ICollection<LoanReadViewModel> GetLoans()
@@ -215,6 +216,8 @@ namespace CSMF.WebMvc.Controllers
                 .ProjectToType<CustomerReadViewModel>()
                 .AsQueryable();
 
+            var branches = httpContextExtractor.GetBranchIdFromUserClaims();
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(c =>
@@ -222,6 +225,7 @@ namespace CSMF.WebMvc.Controllers
             EF.Functions.Like(c.LastName, $"%{search}%") ||
             EF.Functions.Like(c.IdentificationNumber, $"%{search}%"));
             }
+            query = query.Where(c => branches.Contains(c.BranchId));
 
             var pageResultViewModel = await PaginatedSearchResult<CustomerReadViewModel>.PaginatedQueryAsync(
                 query, page, size);

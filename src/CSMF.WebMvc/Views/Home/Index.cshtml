@@ -1,6 +1,11 @@
 ﻿@model DashboardViewModel
+
 @{
     ViewData["Title"] = "Dashboard";
+
+}
+@{ 
+    var isAdmin = Context.User.IsInRole(nameof(DefinedRole.Administrator));
 }
 
 <div class="container-fluid px-4 mt-3">
@@ -13,7 +18,12 @@
             <select id="branchFilter" class="form-select shadow-sm"
                     asp-for="SelectedBranchId"
                     asp-items="@(new SelectList(Model.Branches, "Id", "Name"))">
-                <option value="0">All Branches</option>
+
+                @if (isAdmin)
+                {
+                    <option value="0">All Branches</option>
+                }
+
             </select>
         </div>
     </div>
@@ -33,11 +43,11 @@
                         </div>
                     </div>
                     @*<div class="mt-3">
-                        <span class="badge bg-light text-dark">
-                            <i class="bi bi-arrow-up-right-circle text-success me-1"></i>
-                            @Model.TotalLoans% from last month
-                        </span>
-                    </div>*@
+                            <span class="badge bg-light text-dark">
+                                <i class="bi bi-arrow-up-right-circle text-success me-1"></i>
+                                @Model.TotalLoans% from last month
+                            </span>
+                        </div>*@
                 </div>
             </div>
         </div>
@@ -56,9 +66,9 @@
                     </div>
                     <div class="mt-3">
                         @*<span class="badge bg-light text-dark">
-                            <i class="bi bi-arrow-up-right-circle text-success me-1"></i>
-                            @Model.ActiveLoans% from last month
-                        </span>*@
+                                <i class="bi bi-arrow-up-right-circle text-success me-1"></i>
+                                @Model.ActiveLoans% from last month
+                            </span>*@
                     </div>
                 </div>
             </div>
@@ -78,9 +88,9 @@
                     </div>
                     <div class="mt-3">
                         @*<span class="badge bg-light text-dark">
-                            <i class="bi bi-arrow-down-right-circle text-danger me-1"></i>
-                            @Model.OverdueLoans% from last month
-                        </span>*@
+                                <i class="bi bi-arrow-down-right-circle text-danger me-1"></i>
+                                @Model.OverdueLoans% from last month
+                            </span>*@
                     </div>
                 </div>
             </div>
@@ -128,9 +138,9 @@
                 <div class="card-body">
                     <h3 class="text-primary">@Model.OutstandingPrincipal.ToString("N0")</h3>
                     @*<div class="progress mt-3" style="height: 8px;">
-                        <div class="progress-bar bg-primary" style="width: @Model.OutstandingPrincipal%"></div>
-                    </div>*@
-                <small class="text-muted">Unpaid principal amount</small>
+                            <div class="progress-bar bg-primary" style="width: @Model.OutstandingPrincipal%"></div>
+                        </div>*@
+                    <small class="text-muted">Unpaid principal amount</small>
                 </div>
             </div>
         </div>
@@ -145,9 +155,9 @@
                 <div class="card-body">
                     <h3 class="text-success">@Model.TotalCollected.ToString("N0")</h3>
                     @*<div class="progress mt-3" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: @Model.TotalCollected%"></div>
-                    </div>*@
-                <small class="text-muted">Total collected so far</small>
+                            <div class="progress-bar bg-success" style="width: @Model.TotalCollected%"></div>
+                        </div>*@
+                    <small class="text-muted">Total collected so far</small>
                 </div>
             </div>
         </div>
@@ -162,8 +172,8 @@
                 <div class="card-body">
                     <h3 class="text-warning">@Model.TotalFeesCollected.ToString("N0")</h3>
                     @*<div class="progress mt-3" style="height: 8px;">
-                        <div class="progress-bar bg-warning" style="width: @Model.TotalFeesCollected%"></div>
-                    </div>*@
+                            <div class="progress-bar bg-warning" style="width: @Model.TotalFeesCollected%"></div>
+                        </div>*@
                     <small class="text-muted">From service/late fees</small>
                 </div>
             </div>

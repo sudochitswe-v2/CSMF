@@ -55,6 +55,12 @@
                     <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary me-2">
                         <i class="bi bi-pencil-square"></i>
                     </a>
+                    @if (User.IsInRole(DefinedRole.Administrator.ToString()))
+                    {
+                        <a asp-controller="Account" asp-action="ChangePassword" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary me-2">
+                            <i class="bi bi-lock-fill"></i>
+                        </a>
+                    }
                     @* } *@
                     <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline">
                         <button type="submit" class="btn btn-sm btn-outline-danger"

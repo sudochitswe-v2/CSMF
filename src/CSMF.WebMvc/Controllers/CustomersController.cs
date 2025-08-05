@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace CSMF.WebMvc.Controllers
 {
@@ -42,16 +43,10 @@ namespace CSMF.WebMvc.Controllers
         }
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme,
             Roles = nameof(DefinedRole.LoanOfficer) + "," + nameof(DefinedRole.Administrator))]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var branches = dbContext.Branches
-               .AsNoTracking()
-               .Adapt<List<BranchReadViewModel>>()
-               .ToList();
-            var viewModel = new CustomerCreateViewModel
-            {
-                Branches = branches
-            };
+            var viewModel = new CustomerCreateViewModel();
+            await PopulateBranchesAsync(viewModel);
             return View(viewModel);
         }
 
@@ -116,7 +111,9 @@ namespace CSMF.WebMvc.Controllers
         }
         private async Task PopulateBranchesAsync(CustomerCreateViewModel model)
         {
-            model.Branches = await dbContext.Branches
+            var branches = httpExtractor.GetBranchIdFromUserClaims();
+            model.Branches = await dbContext.Branches.AsNoTracking()
+                .Where(b => branches.Contains(b.Id))
                 .Select(b => new BranchReadViewModel
                 {
                     Id = b.Id,
@@ -200,12 +197,12 @@ namespace CSMF.WebMvc.Controllers
 
             if (customer == null) return NotFound();
 
-            if (!customer.Level.Equals(nameof(DefinedCustomerLevel.Level0)))
+            if (!model.Level.Equals(nameof(DefinedCustomerLevel.Level0)))
             {
                 var message = customerSvc.IsValidForSelectedLevel(customer.Id, model.Level);
                 if (!string.IsNullOrEmpty(message))
                 {
-                    ModelState.AddModelError(string.Empty, message);
+                    ModelState.AddModelError("Level", message);
                     await PopulateBranchesAsync(model);
                     return View(model);
                 }

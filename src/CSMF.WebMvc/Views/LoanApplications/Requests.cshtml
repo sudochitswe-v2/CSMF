@@ -3,8 +3,14 @@
 @{
     ViewData["Title"] = "Pending Approval Loan Application";
 }
+<div class="d-flex justify-content-end align-items-center flex-wrap">
+    <a asp-action="Requests" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+    </a>
+</div>
 @if (Model.Any())
 {
+    
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead class="table-light">
