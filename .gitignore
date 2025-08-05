@@ -402,3 +402,5 @@ FodyWeavers.xsd
 
 *.pem
 appsettings.json
+
+DatabaseBackups/
